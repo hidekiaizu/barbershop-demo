@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --red: #d7332f;
+  --blue: #2867d8;
+  --yellow: #e4b72e;
+  --green: #4d8f39;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 18% 10%, rgba(215, 51, 47, 0.16), transparent 30rem),
+    radial-gradient(circle at 88% 18%, rgba(40, 103, 216, 0.16), transparent 26rem),
+    #080808;
+  color: #f2efe7;
+  font-family: Inter, Arial, Helvetica, sans-serif;
+}
+
+body::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  opacity: 0.07;
+  background-image:
+    linear-gradient(115deg, transparent 0 48%, rgba(255, 255, 255, 0.22) 49%, transparent 51%),
+    repeating-radial-gradient(circle at 20% 20%, rgba(255,255,255,.8) 0 1px, transparent 1px 4px);
+  mix-blend-mode: screen;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  outline-offset: 4px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #e4b72e;
+}
+
+.display-text {
+  font-family: Impact, Haettenschweiler, "Arial Narrow", sans-serif;
+  letter-spacing: 0;
+}
+
+.ticket-edge {
+  background-image:
+    radial-gradient(circle at left 18px, transparent 0 9px, #d8cdb9 10px),
+    radial-gradient(circle at right 18px, transparent 0 9px, #d8cdb9 10px);
+  background-size: 100% 36px;
+}
+
+.arrival-flicker {
+  animation: flicker 4s infinite steps(1, end);
+}
+
+@keyframes flicker {
+  0%, 92%, 100% { opacity: 1; }
+  93% { opacity: .76; }
+  94% { opacity: .95; }
+  96% { opacity: .82; }
+}
+
+.barcode {
+  background: repeating-linear-gradient(90deg, #141414 0 3px, transparent 3px 7px, #141414 7px 9px, transparent 9px 13px);
+}
