@@ -7,15 +7,13 @@ import {
   Check,
   ChevronRight,
   Clock3,
-  GalleryHorizontalEnd,
-  Home as HomeIcon,
   Mail,
   MapPin,
   Menu,
   Phone,
   Scissors,
-  ShoppingBag,
   Star,
+  Ticket,
   TrainFront,
   UserRound,
   X,
@@ -23,135 +21,182 @@ import {
 
 type LineColor = "red" | "blue" | "yellow" | "green";
 
-const lineStyles: Record<LineColor, { bg: string; text: string; border: string; shadow: string; label: string }> = {
-  red: { bg: "bg-lineRed", text: "text-lineRed", border: "border-lineRed", shadow: "shadow-[0_0_26px_rgba(215,51,47,.35)]", label: "Haircuts" },
-  blue: { bg: "bg-lineBlue", text: "text-lineBlue", border: "border-lineBlue", shadow: "shadow-[0_0_26px_rgba(40,103,216,.35)]", label: "Beards" },
-  yellow: { bg: "bg-lineYellow", text: "text-lineYellow", border: "border-lineYellow", shadow: "shadow-[0_0_26px_rgba(228,183,46,.35)]", label: "Kids" },
-  green: { bg: "bg-lineGreen", text: "text-lineGreen", border: "border-lineGreen", shadow: "shadow-[0_0_26px_rgba(77,143,57,.35)]", label: "Packages" },
+const lineStyles: Record<LineColor, { bg: string; text: string; border: string; ring: string; label: string }> = {
+  red: { bg: "bg-lineRed", text: "text-lineRed", border: "border-lineRed", ring: "ring-lineRed", label: "Haircuts" },
+  blue: { bg: "bg-lineBlue", text: "text-lineBlue", border: "border-lineBlue", ring: "ring-lineBlue", label: "Beard" },
+  yellow: { bg: "bg-lineYellow", text: "text-lineYellow", border: "border-lineYellow", ring: "ring-lineYellow", label: "Kids" },
+  green: { bg: "bg-lineGreen", text: "text-lineGreen", border: "border-lineGreen", ring: "ring-lineGreen", label: "VIP" },
 };
 
-const navItems = ["Home", "About", "Services", "Barbers", "Booking", "Gallery", "Contact"];
-
-const serviceLines = [
-  { line: "red" as const, initial: "R", route: "Red Line", name: "Haircuts", desc: "Classic cuts, skin fades, tapers, scissor cuts, and style shaping.", options: ["Classic Cut", "Skin Fade", "Taper", "Scissor Cut"], price: "Starting at $35" },
-  { line: "blue" as const, initial: "B", route: "Blue Line", name: "Beard", desc: "Lineups, beard trims, hot towel shaves, and razor detailing.", options: ["Beard Trim", "Beard Lineup", "Hot Towel Shave"], price: "Starting at $20" },
-  { line: "yellow" as const, initial: "Y", route: "Yellow Line", name: "Kids Cuts", desc: "Fresh cuts for the next generation. Clean, quick, and comfortable.", options: ["Kids Cut", "Student Cut", "First Cut"], price: "Starting at $25" },
-  { line: "green" as const, initial: "G", route: "Green Line", name: "VIP Packages", desc: "Premium service, full grooming, hot towel, wash, and styling.", options: ["Cut + Beard", "Full Service", "Groom Package"], price: "Starting at $65" },
+const navItems = [
+  { label: "Station", href: "#home" },
+  { label: "Our Station", href: "#about" },
+  { label: "Lines", href: "#services" },
+  { label: "Conductors", href: "#barbers" },
+  { label: "Book Your Ride", href: "#booking" },
+  { label: "Archive", href: "#gallery" },
+  { label: "Visit", href: "#contact" },
 ];
 
-const services = [
-  { name: "Skin Fade", desc: "Precision fade with clean blend and razor-finished edges.", duration: "45 min", price: "$45", line: "red" as const },
-  { name: "Classic Cut", desc: "Timeless cut, styled and finished for the day ahead.", duration: "35 min", price: "$35", line: "red" as const },
-  { name: "Beard Lineup", desc: "Sharp edges, shape-up, and balanced beard structure.", duration: "20 min", price: "$20", line: "blue" as const },
-  { name: "Hot Towel Shave", desc: "Traditional shave experience with warm towel service.", duration: "30 min", price: "$35", line: "blue" as const },
-  { name: "Kids Cut", desc: "Clean cut for younger clients with patient service.", duration: "30 min", price: "$25", line: "yellow" as const },
-  { name: "VIP Experience", desc: "Cut, beard, hot towel, wash, and finish in one appointment.", duration: "75 min", price: "$80", line: "green" as const },
+const routes = [
+  {
+    line: "red" as const,
+    code: "B",
+    route: "Red Line",
+    name: "Haircuts",
+    desc: "Classic cuts, skin fades, tapers, scissor cuts, and style shaping.",
+    stops: [
+      { code: "B01", name: "Classic Cut", duration: "35 min", price: "$35" },
+      { code: "B02", name: "Skin Fade", duration: "45 min", price: "$45" },
+      { code: "B03", name: "Taper", duration: "40 min", price: "$40" },
+      { code: "B04", name: "Scissor Cut", duration: "45 min", price: "$50" },
+    ],
+  },
+  {
+    line: "blue" as const,
+    code: "S",
+    route: "Blue Line",
+    name: "Beard",
+    desc: "Lineups, beard trims, hot towel shaves, and razor detailing.",
+    stops: [
+      { code: "S01", name: "Beard Trim", duration: "20 min", price: "$20" },
+      { code: "S02", name: "Beard Lineup", duration: "20 min", price: "$20" },
+      { code: "S03", name: "Hot Towel Shave", duration: "30 min", price: "$35" },
+    ],
+  },
+  {
+    line: "yellow" as const,
+    code: "C",
+    route: "Yellow Line",
+    name: "Kids Cuts",
+    desc: "Fresh cuts for the next generation. Clean, quick, and comfortable.",
+    stops: [
+      { code: "C01", name: "Kids Cut", duration: "30 min", price: "$25" },
+      { code: "C02", name: "Student Cut", duration: "35 min", price: "$30" },
+      { code: "C03", name: "First Cut", duration: "30 min", price: "$25" },
+    ],
+  },
+  {
+    line: "green" as const,
+    code: "G",
+    route: "Green Line",
+    name: "VIP / Packages",
+    desc: "Premium service, full grooming, hot towel, wash, and styling.",
+    stops: [
+      { code: "G01", name: "Cut + Beard", duration: "60 min", price: "$65" },
+      { code: "G02", name: "Full Service", duration: "75 min", price: "$80" },
+      { code: "G03", name: "Groom Package", duration: "90 min", price: "$95" },
+    ],
+  },
 ];
 
-const barbers = [
-  { name: "Chris", role: "Lead Barber", specialty: "Skin Fades, Sharp Lines, Beard Grooming", duty: "Mon-Fri", years: "12 years", line: "red" as const },
-  { name: "Mike", role: "Senior Barber", specialty: "Tapers, Textured Styles, Beard Lineup", duty: "Tue-Sat", years: "9 years", line: "blue" as const },
-  { name: "Eli", role: "Barber", specialty: "Kids Cuts, Fades, Designs", duty: "Wed-Sun", years: "6 years", line: "yellow" as const },
-  { name: "Dez", role: "Beard Specialist", specialty: "Beard Shaping, Razor Work, Hot Towel Shave", duty: "Thu-Sun", years: "8 years", line: "green" as const },
-];
-
-const arrivals = [
-  ["Skin Fade", "10:30 AM"],
-  ["Beard Trim", "11:15 AM"],
-  ["Kids Cut", "12:00 PM"],
-  ["Cut + Beard", "1:30 PM"],
-];
+const services = routes.flatMap((route) => route.stops.map((stop) => ({ ...stop, line: route.line, route: route.route, category: route.name })));
 
 const heroArrivals = [
   { name: "Haircuts", time: "2 min", line: "red" as const, label: "B" },
   { name: "Beard Lineup", time: "4 min", line: "blue" as const, label: "S" },
-  { name: "Kids Cuts", time: "7 min", line: "yellow" as const, label: "Y" },
+  { name: "Kids Cuts", time: "7 min", line: "yellow" as const, label: "C" },
   { name: "VIP Experience", time: "10 min", line: "green" as const, label: "G" },
 ];
 
-const routeMap = [
-  { line: "red" as const, title: "Red Line - Haircuts", price: "From $35", stops: ["Classic Cut", "Skin Fade", "Taper", "Scissor Cut"] },
-  { line: "blue" as const, title: "Blue Line - Beard", price: "From $20", stops: ["Beard Trim", "Beard Lineup", "Hot Towel Shave"] },
-  { line: "yellow" as const, title: "Yellow Line - Kids", price: "From $25", stops: ["Kids Cut", "Student Cut", "First Cut"] },
-  { line: "green" as const, title: "Green Line - VIP / Packages", price: "From $65", stops: ["Cut + Beard", "Full Service", "Groom Package"] },
+const barbers = [
+  {
+    name: "Chris",
+    role: "Lead Conductor",
+    specialty: "Skin Fades, Sharp Lines, Beard Grooming",
+    line: "red" as const,
+    schedule: "Mon-Fri",
+    next: "Today 10:30 AM",
+    note: "Sharp fades. No rushed work.",
+  },
+  {
+    name: "Mike",
+    role: "Senior Conductor",
+    specialty: "Tapers, Textured Styles, Beard Lineup",
+    line: "blue" as const,
+    schedule: "Tue-Sat",
+    next: "Today 11:15 AM",
+    note: "Classic cuts with clean structure.",
+  },
+  {
+    name: "Eli",
+    role: "Fade Operator",
+    specialty: "Kids Cuts, Fades, Designs",
+    line: "yellow" as const,
+    schedule: "Wed-Sun",
+    next: "Today 12:00 PM",
+    note: "Patient chair work, crisp finish.",
+  },
+  {
+    name: "Dez",
+    role: "Beard Specialist",
+    specialty: "Beard Shaping, Razor Work, Hot Towel Shave",
+    line: "green" as const,
+    schedule: "Thu-Sun",
+    next: "Today 1:30 PM",
+    note: "Beard work built on precision.",
+  },
 ];
 
-const gallery = ["Crisp Fade", "Barber Chair", "Beard Work", "Shop Detail", "Clean Taper", "After Hours"];
+const gallery = [
+  ["Platform 01", "Skin Fade", "red"],
+  ["Track B", "Beard Lineup", "blue"],
+  ["Downtown Cut", "Taper", "yellow"],
+  ["After Hours", "Chair Detail", "green"],
+  ["Express Stop", "Clean Taper", "red"],
+  ["Night Shift", "Shop Detail", "blue"],
+] as const;
+
 const reviews = [
-  ["Best fade in the neighborhood. Clean, fast, and professional.", "Jay"],
-  ["The whole shop has a vibe. Booking was easy and the cut was perfect.", "Marcus"],
-  ["My beard lineup was sharp. I am definitely coming back.", "Andre"],
+  ["Best fade in the neighborhood. Clean, fast, and professional.", "Jay", "B02"],
+  ["The whole shop has a vibe. Booking was easy and the cut was perfect.", "Marcus", "G01"],
+  ["My beard lineup was sharp. I am definitely coming back.", "Andre", "S02"],
 ];
 
 function RouteDot({ label, color }: { label: string; color: LineColor }) {
-  return (
-    <span className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${lineStyles[color].bg} text-sm font-black text-white shadow-lg`}>
-      {label}
-    </span>
-  );
+  return <span className={`route-dot ${lineStyles[color].bg}`}>{label}</span>;
 }
 
 function SectionHeading({ eyebrow, title, copy }: { eyebrow: string; title: string; copy: string }) {
   return (
-    <div className="mx-auto mb-10 max-w-3xl text-center">
-      <p className="mb-3 text-xs font-black uppercase tracking-[0.28em] text-lineYellow">{eyebrow}</p>
-      <h2 className="display-text text-5xl uppercase leading-none text-cream md:text-7xl">{title}</h2>
-      <p className="mt-4 text-base leading-7 text-mutedCream md:text-lg">{copy}</p>
+    <div className="mb-10 max-w-4xl">
+      <p className="station-eyebrow">{eyebrow}</p>
+      <h2 className="display-text text-6xl uppercase leading-[.82] text-cream md:text-8xl">{title}</h2>
+      <p className="mt-4 max-w-2xl text-base font-bold leading-7 text-mutedCream md:text-lg">{copy}</p>
     </div>
   );
 }
 
 function CTAButton({ children, href = "#booking", variant = "primary" }: { children: React.ReactNode; href?: string; variant?: "primary" | "secondary" }) {
   return (
-    <a
-      href={href}
-      className={`interactive-button inline-flex min-h-12 items-center justify-center gap-2 rounded-md px-5 py-3 text-sm font-black uppercase ${
-        variant === "primary" ? "bg-lineRed text-white shadow-glow" : "border border-white/35 bg-black/20 text-cream hover:bg-white/10"
-      }`}
-    >
+    <a href={href} className={`ticket-button ${variant === "primary" ? "ticket-button-primary" : "ticket-button-secondary"}`}>
       {children}
-      <ChevronRight className="h-4 w-4" />
+      <ChevronRight className="h-5 w-5" />
     </a>
   );
 }
 
 function Header() {
   const [open, setOpen] = useState(false);
+
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-black/75 backdrop-blur-xl lg:hidden">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8" aria-label="Main navigation">
-        <a href="#home" className="group">
-          <div className="display-text text-2xl uppercase leading-none text-cream">Barber Station</div>
-          <div className="mt-1 flex gap-1.5">
-            <RouteDot label="B" color="red" />
-            <RouteDot label="S" color="blue" />
-            <RouteDot label="C" color="green" />
-          </div>
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/15 bg-black/90 backdrop-blur lg:hidden">
+      <nav className="flex items-center justify-between px-4 py-3" aria-label="Main navigation">
+        <a href="#home" className="display-text text-3xl uppercase leading-none text-cream">
+          Barber Station
         </a>
-        <div className="hidden items-center gap-5 lg:flex">
-          {navItems.map((item) => (
-            <a key={item} href={`#${item.toLowerCase().replaceAll(" ", "-")}`} className="text-xs font-black uppercase text-mutedCream transition hover:text-cream">
-              {item}
-            </a>
-          ))}
-        </div>
-        <div className="hidden items-center gap-3 lg:flex">
-          <CTAButton>Book Now</CTAButton>
-        </div>
-        <button className="rounded-md border border-white/15 p-2 lg:hidden" aria-label="Toggle menu" onClick={() => setOpen((value) => !value)}>
+        <button className="border border-white/20 p-2" aria-label="Toggle menu" onClick={() => setOpen((value) => !value)}>
           {open ? <X /> : <Menu />}
         </button>
       </nav>
       {open && (
-        <div className="border-t border-white/10 bg-coal px-4 py-4 lg:hidden">
-          <div className="grid gap-3">
-            {navItems.map((item) => (
-              <a key={item} onClick={() => setOpen(false)} href={`#${item.toLowerCase().replaceAll(" ", "-")}`} className="rounded-md px-3 py-3 text-sm font-black uppercase text-mutedCream hover:bg-white/5">
-                {item}
-              </a>
-            ))}
-            <CTAButton>Book Now</CTAButton>
-          </div>
+        <div className="grid border-t border-white/15 bg-coal p-4">
+          {navItems.map((item) => (
+            <a key={item.label} href={item.href} onClick={() => setOpen(false)} className="border-b border-white/10 py-3 text-sm font-black uppercase tracking-[0.08em] text-mutedCream">
+              {item.label}
+            </a>
+          ))}
+          <CTAButton>Book Now</CTAButton>
         </div>
       )}
     </header>
@@ -159,163 +204,66 @@ function Header() {
 }
 
 function StationSidebar() {
-  const sideNav = [
-    { label: "Home", href: "#home", icon: HomeIcon },
-    { label: "Our Station", href: "#about", icon: TrainFront },
-    { label: "Services", href: "#services", icon: Scissors },
-    { label: "Barbers", href: "#barbers", icon: UserRound },
-    { label: "Schedule", href: "#booking", icon: Clock3 },
-    { label: "Gallery", href: "#gallery", icon: GalleryHorizontalEnd },
-    { label: "Shop", href: "#services-menu", icon: ShoppingBag },
-    { label: "Contact", href: "#contact", icon: Mail },
-  ];
-
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 overflow-y-auto border-r border-white/15 bg-[#090909]/95 px-6 py-6 shadow-[18px_0_60px_rgba(0,0,0,.45)] lg:block">
-      <div className="absolute inset-0 bg-tile bg-[length:32px_32px] opacity-10" />
+    <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-white/15 bg-[#070707]/95 px-6 py-6 lg:block">
+      <div className="absolute inset-0 bg-tile bg-[length:34px_34px] opacity-10" />
       <div className="relative">
-        <a href="#home" className="block">
-          <h1 className="display-text text-4xl uppercase leading-[.86] text-cream xl:text-5xl">Barber<br />Station</h1>
+        <a href="#home">
+          <h1 className="display-text text-5xl uppercase leading-[.78] text-cream">Barber<br />Station</h1>
           <div className="mt-4 flex gap-2">
             <RouteDot label="B" color="red" />
             <RouteDot label="S" color="blue" />
             <RouteDot label="C" color="yellow" />
+            <RouteDot label="G" color="green" />
           </div>
-          <p className="mt-4 border-b border-white/10 pb-4 text-[0.64rem] font-black uppercase tracking-[0.24em] text-mutedCream">Next Stop / A Better You</p>
+          <p className="mt-5 border-y border-white/15 py-3 text-[0.65rem] font-black uppercase tracking-[0.24em] text-mutedCream">Brooklyn / Platform 718</p>
         </a>
         <nav className="mt-5 border-y border-white/10" aria-label="Desktop station navigation">
-          {sideNav.map(({ label, href, icon: Icon }) => (
-            <a key={label} href={href} className="flex min-h-12 items-center gap-4 border-b border-white/10 text-xs font-black uppercase tracking-[0.08em] text-mutedCream transition last:border-b-0 hover:bg-white/[.04] hover:text-cream">
-              <Icon className="h-5 w-5 text-white/55" />
-              {label}
+          {navItems.map((item) => (
+            <a key={item.label} href={item.href} className="flex min-h-12 items-center gap-4 border-b border-white/10 text-xs font-black uppercase tracking-[0.08em] text-mutedCream last:border-b-0 hover:bg-white/[.04] hover:text-cream">
+              <TrainFront className="h-4 w-4 text-white/45" />
+              {item.label}
             </a>
           ))}
         </nav>
-        <div className="mt-5 border border-white/15 bg-black/75 p-3 text-center">
-          <p className="display-text text-2xl uppercase leading-none text-cream xl:text-3xl">Walk-ins<br />Welcome</p>
-          <p className="mt-3 text-[0.66rem] font-black uppercase tracking-[0.18em] text-mutedCream">No appointment?</p>
-          <p className="text-xs font-black uppercase text-lineRed">We got you</p>
+        <div className="mt-5 border border-lineYellow/45 bg-[#171307] p-4">
+          <p className="display-text text-4xl uppercase leading-none text-ticket">Open Now</p>
+          <p className="mt-2 text-xs font-black uppercase tracking-[0.18em] text-mutedCream">Mon-Fri 10AM-8PM</p>
+          <p className="mt-4 text-sm font-black uppercase text-lineYellow">Walk-ins welcome when chairs are open</p>
         </div>
       </div>
     </aside>
   );
 }
 
-function StationVisual({ label = "Barber Station" }: { label?: string }) {
-  return (
-    <div className="interactive-frame subway-grit relative min-h-[520px] overflow-hidden rounded-sm border border-white/15 bg-steel shadow-2xl">
-      <div className="absolute inset-0 bg-tile bg-[length:76px_76px] opacity-55" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_20%,rgba(242,239,231,.12),transparent_24rem)]" />
-      <div className="absolute inset-0 scratch-lines opacity-45 mix-blend-screen" />
-      <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/85 to-transparent" />
-      <p className="spray-tag pointer-events-none absolute -left-4 top-48 rotate-[-11deg] text-7xl uppercase leading-none text-lineBlue/20 md:text-9xl">
-        Fade
-      </p>
-      <p className="spray-tag paint-drip pointer-events-none absolute right-4 top-52 rotate-[8deg] text-5xl uppercase leading-none text-lineRed/35 md:text-7xl [--drip:rgba(215,51,47,.42)]">
-        BRC
-      </p>
-      <p className="spray-tag pointer-events-none absolute bottom-44 left-8 rotate-[3deg] text-3xl uppercase text-lineYellow/35 md:text-5xl">
-        Local
-      </p>
-      <p className="pointer-events-none absolute left-10 top-8 display-text text-[5.8rem] uppercase leading-none text-white/[.055] md:text-[7.5rem]">
-        {label}
-      </p>
-
-      <div className="absolute left-6 right-6 top-20 rounded-sm border border-white/25 bg-black/70 px-5 py-5 backdrop-blur-sm md:left-12">
-        <div className="flex items-center justify-between gap-4">
-          <p className="display-text text-3xl uppercase leading-none sm:text-4xl md:text-6xl">{label}</p>
-          <div className="flex gap-3">
-            <span className="h-11 w-11 rounded-full bg-lineRed md:h-14 md:w-14" />
-            <span className="h-11 w-11 rounded-full bg-lineBlue md:h-14 md:w-14" />
-            <span className="h-11 w-11 rounded-full bg-lineYellow md:h-14 md:w-14" />
-          </div>
-        </div>
-      </div>
-      <p className="absolute right-6 top-24 hidden text-xs font-black uppercase tracking-[0.08em] text-mutedCream [writing-mode:vertical-rl] md:block">
-        Open Mon-Sun / Stay Sharp
-      </p>
-
-      <div className="absolute bottom-24 left-1/2 w-[84%] -translate-x-1/2 border border-white/15 bg-black/85 p-5 shadow-[0_22px_60px_rgba(0,0,0,.45)] md:w-[58%]">
-        <div className="mb-3 flex justify-between border-b border-white/15 pb-3 text-sm font-bold text-mutedCream">
-          <span>Downtown</span>
-          <span>Platform 01</span>
-        </div>
-        <p className="display-text text-4xl uppercase leading-none sm:text-5xl md:text-6xl">Barber Station</p>
-        <p className="mt-3 border-t border-white/15 pt-3 text-2xl font-black uppercase text-lineYellow">Next Stop: A Better You</p>
-        <div className="mt-4 flex gap-2"><RouteDot label="B" color="red" /><RouteDot label="S" color="blue" /><RouteDot label="C" color="yellow" /><RouteDot label="VIP" color="green" /></div>
-      </div>
-
-      <div className="absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-t from-black via-black/80 to-transparent" />
-      <div className="absolute bottom-0 left-[12%] h-28 w-20 bg-black/90 md:w-28" />
-      <div className="absolute bottom-0 left-[46%] h-36 w-24 bg-black/95 md:w-32" />
-      <div className="absolute bottom-0 right-[8%] h-28 w-20 bg-black/90 md:w-28" />
-      <div className="absolute bottom-14 left-12 right-12 h-3 bg-lineYellow/70" />
-      <div className="absolute bottom-10 left-12 right-12 h-2 bg-lineRed/65" />
-      <div className="absolute bottom-3 left-10 right-10 h-px bg-white/25" />
-    </div>
-  );
-}
-
 function Hero() {
   return (
-    <section id="home" className="relative overflow-hidden bg-black pt-20 lg:pt-0">
-        <div className="relative min-h-screen overflow-hidden">
-          <div className="subway-platform relative min-h-[720px] overflow-hidden border-b border-white/15 px-4 py-8 sm:px-8 lg:min-h-[73vh] lg:px-16">
-            <div className="absolute inset-0 subway-grit opacity-65" />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.9)_0%,rgba(0,0,0,.58)_39%,rgba(0,0,0,.24)_64%,rgba(0,0,0,.72)_100%)]" />
-            <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-black via-black/70 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-t from-black via-black/70 to-transparent" />
-
-            <div className="station-sign absolute left-[24%] top-12 hidden w-[48rem] rotate-[-3deg] border border-white/15 bg-[#080808]/95 px-7 py-5 shadow-[0_24px_70px_rgba(0,0,0,.7)] xl:block">
-              <div className="flex items-center justify-between gap-5">
-                <div>
-                  <p className="display-text text-6xl uppercase leading-none text-cream">Barber Station</p>
-                  <p className="mt-2 text-2xl font-black uppercase text-mutedCream">Next Stop: A Better You</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <RouteDot label="B" color="red" />
-                  <RouteDot label="S" color="blue" />
-                  <RouteDot label="C" color="yellow" />
-                  <ChevronRight className="h-20 w-20 text-ticket" />
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute right-0 top-0 hidden h-28 w-48 bg-lineRed px-7 py-6 xl:block">
-              <p className="text-sm font-black uppercase tracking-[0.22em] text-white/80">Book<br />Now</p>
-            </div>
-
-            <div className="absolute right-10 top-60 hidden border border-white/15 bg-black/80 p-5 text-center xl:block">
-              <p className="text-lg font-black uppercase tracking-[0.12em] text-white/60">Track</p>
-              <p className="display-text text-7xl uppercase leading-none text-white/55">1</p>
-            </div>
-
-            <motion.div className="relative z-10 pt-12 lg:max-w-[42rem] lg:pt-72" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-              <h1 className="display-text max-w-4xl uppercase leading-[.88] text-cream">
-                <span className="block text-[3.5rem] sm:text-[5.4rem] lg:text-[6.2rem]">This Isn't Just</span>
-                <span className="block text-[3.45rem] sm:text-[5.25rem] lg:text-[6rem]">A Barbershop.</span>
-                <span className="block text-[3.65rem] text-lineRed sm:text-[5.55rem] lg:text-[6.4rem]">It's A Station.</span>
-              </h1>
-              <p className="mt-5 max-w-xl text-base font-bold leading-7 text-mutedCream">Subway grit, sharp fades, clean shaves, and appointments that move on time.</p>
-              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-                <a href="#booking" className="interactive-button inline-flex min-h-16 items-center justify-center gap-4 bg-ticket px-7 text-sm font-black uppercase tracking-[0.08em] text-black">
-                  Enter The Station <ChevronRight className="h-6 w-6" />
-                </a>
-                <a href="#services" className="interactive-button inline-flex min-h-16 items-center justify-center gap-4 border border-white/35 bg-black/45 px-7 text-sm font-black uppercase tracking-[0.08em] text-cream">
-                  Explore Services <TrainFront className="h-6 w-6" />
-                </a>
-              </div>
-            </motion.div>
-
-            <HeroArrivals />
-
-            <div className="absolute bottom-8 left-[46%] hidden h-36 w-52 -translate-x-1/2 rounded-t-full border border-white/10 bg-black/80 shadow-[0_0_80px_rgba(228,183,46,.18)] lg:block">
-              <div className="absolute left-12 top-12 h-9 w-9 rounded-full bg-ticket/80 blur-sm" />
-              <div className="absolute right-12 top-12 h-9 w-9 rounded-full bg-ticket/80 blur-sm" />
-            </div>
+    <section id="home" className="relative overflow-hidden border-b border-white/15 bg-black pt-16 lg:pt-0">
+      <div className="hero-photo absolute inset-0" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.96)_0%,rgba(0,0,0,.72)_44%,rgba(0,0,0,.38)_73%,rgba(0,0,0,.86)_100%)]" />
+      <div className="absolute inset-0 subway-grit opacity-70" />
+      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black to-transparent" />
+      <div className="relative min-h-[920px] px-4 pb-10 pt-10 sm:px-8 lg:min-h-screen lg:px-14 lg:pt-14">
+        <div className="mb-8 grid gap-3 border-y border-white/15 py-3 text-xs font-black uppercase tracking-[0.18em] text-mutedCream sm:grid-cols-3">
+          <span>Brooklyn, NY</span>
+          <span>Open Mon-Sun</span>
+          <span>Walk-ins Welcome</span>
+        </div>
+        <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="relative z-10">
+          <h1 className="hero-title display-text uppercase text-cream">
+            <span>This Isn't Just</span>
+            <span>A Barbershop.</span>
+            <span className="text-lineRed">It's A Station.</span>
+          </h1>
+          <p className="mt-6 max-w-2xl text-xl font-black leading-8 text-mutedCream md:text-2xl">
+            Sharp fades, beard work, and clean cuts moving on schedule in Brooklyn. Pick your line. Choose your conductor. Swipe in.
+          </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <CTAButton>Book Your Ride</CTAButton>
+            <CTAButton href="#services" variant="secondary">Explore the Lines</CTAButton>
           </div>
-
-          <HeroRouteMap />
+        </motion.div>
+        <HeroArrivals />
       </div>
     </section>
   );
@@ -323,159 +271,91 @@ function Hero() {
 
 function HeroArrivals() {
   return (
-    <div className="relative z-10 mt-10 border border-white/15 bg-black/80 p-4 shadow-[0_22px_60px_rgba(0,0,0,.55)] lg:absolute lg:bottom-16 lg:right-16 lg:mt-0 lg:w-[28rem]">
-      <div className="mb-3 flex items-center justify-between border-b border-white/10 pb-3 font-mono text-xs font-black uppercase tracking-[0.16em] text-mutedCream">
+    <div className="arrival-board relative z-10 mt-10 lg:absolute lg:bottom-12 lg:right-12 lg:w-[30rem]">
+      <div className="mb-3 flex items-center justify-between border-b border-lineYellow/35 pb-3 font-mono text-xs font-black uppercase tracking-[0.16em] text-lineYellow">
         <span>Next Arrivals</span>
-        <span>10:24 AM</span>
+        <span className="arrival-flicker">10:24 AM</span>
       </div>
-      <div className="grid gap-0">
-        {heroArrivals.map((item) => (
-          <div key={item.name} className="grid grid-cols-[2.4rem_1fr_auto] items-center gap-3 border-b border-white/10 py-3 last:border-b-0">
-            <RouteDot label={item.label} color={item.line} />
-            <span className="font-black uppercase tracking-[0.08em] text-mutedCream">{item.name}</span>
-            <span className={`display-text text-3xl uppercase ${lineStyles[item.line].text}`}>{item.time}</span>
-          </div>
-        ))}
-      </div>
-      <p className="mt-3 border-t border-white/10 pt-3 text-center text-[0.65rem] font-black uppercase tracking-[0.18em] text-white/50">Track your cut across the barber station</p>
+      {heroArrivals.map((item) => (
+        <div key={item.name} className="grid grid-cols-[2.25rem_1fr_auto] items-center gap-3 border-b border-white/10 py-3 last:border-b-0">
+          <RouteDot label={item.label} color={item.line} />
+          <span className="font-black uppercase tracking-[0.08em] text-mutedCream">{item.name}</span>
+          <span className={`display-text text-4xl uppercase ${lineStyles[item.line].text}`}>{item.time}</span>
+        </div>
+      ))}
     </div>
   );
 }
 
-function HeroRouteMap() {
+function ChooseLine() {
   return (
-    <div className="relative border-b border-white/10 bg-[#050505] px-4 py-10 sm:px-8 lg:px-16">
-      <div className="absolute inset-0 bg-tile bg-[length:44px_44px] opacity-10" />
+    <section id="services" className="relative overflow-hidden bg-[#060606] px-4 py-24 sm:px-8">
+      <div className="absolute inset-0 bg-tile bg-[length:42px_42px] opacity-10" />
       <div className="relative mx-auto max-w-7xl">
-        <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-lineYellow">Service Lines</p>
-            <h2 className="display-text mt-2 text-5xl uppercase leading-none text-cream md:text-7xl">Pick Your Stop</h2>
-          </div>
-          <a href="#booking" className="interactive-button inline-flex min-h-12 items-center justify-center gap-3 border border-white/20 bg-ticket px-5 text-sm font-black uppercase text-black">
-            Book A Chair <ChevronRight className="h-5 w-5" />
-          </a>
-        </div>
-        <div className="grid gap-4">
-          {routeMap.map((route) => (
-            <article key={route.title} className="interactive-frame subway-grit overflow-hidden border border-white/10 bg-white/[.045] p-4 shadow-[0_18px_55px_rgba(0,0,0,.28)] md:p-5">
-              <div className="grid gap-5 xl:grid-cols-[16rem_1fr] xl:items-center">
-                <div className="flex items-center gap-4">
-                  <RouteDot label={route.title.charAt(0)} color={route.line} />
-                  <div>
-                    <h3 className={`text-sm font-black uppercase tracking-[0.12em] ${lineStyles[route.line].text}`}>{route.title}</h3>
-                    <p className="mt-1 text-sm font-bold text-mutedCream">{route.price}</p>
+        <SectionHeading eyebrow="Choose Your Line" title="Pick Your Stop" copy="The service system is the shop map: red for cuts, blue for beard work, yellow for kids, green for VIP packages." />
+        <div className="grid gap-7">
+          {routes.map((route) => (
+            <article key={route.route} className="transit-line-card">
+              <div className="grid gap-5 lg:grid-cols-[15rem_1fr] lg:items-center">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <RouteDot label={route.code} color={route.line} />
+                    <p className={`text-xs font-black uppercase tracking-[0.16em] ${lineStyles[route.line].text}`}>{route.route}</p>
                   </div>
+                  <h3 className="display-text mt-3 text-5xl uppercase leading-none text-cream">{route.name}</h3>
+                  <p className="mt-3 text-sm font-bold leading-6 text-mutedCream">{route.desc}</p>
                 </div>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  {route.stops.map((stop, index) => (
-                    <a key={stop} href="#booking" className="group relative min-h-24 overflow-hidden border border-white/10 bg-black/55 p-4 transition hover:-translate-y-1 hover:border-white/30 hover:bg-black/75">
-                      <div className={`absolute left-0 top-0 h-1 w-full ${lineStyles[route.line].bg}`} />
-                      <div className="flex items-start justify-between gap-3">
-                        <p className="max-w-[10rem] text-base font-black uppercase tracking-[0.06em] text-cream">{stop}</p>
-                        <span className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-ticket ${lineStyles[route.line].bg} text-xs font-black text-white shadow-lg`}>
-                          {index + 1}
+                <div className="relative overflow-x-auto pb-2">
+                  <div className={`absolute left-8 right-8 top-[3.15rem] h-2 ${lineStyles[route.line].bg}`} />
+                  <div className="relative grid min-w-[44rem] grid-cols-4 gap-4">
+                    {route.stops.map((stop) => (
+                      <a key={stop.code} href="#booking" className="station-stop group">
+                        <span className={`mb-3 block h-10 w-10 rounded-full border-[7px] border-black ${lineStyles[route.line].bg} ring-2 ${lineStyles[route.line].ring}`} />
+                        <span className="font-mono text-xs font-black uppercase text-white/50">{stop.code}</span>
+                        <span className="mt-2 block text-lg font-black uppercase leading-5 text-cream">{stop.name}</span>
+                        <span className="mt-4 flex justify-between border-t border-white/10 pt-3 text-xs font-black uppercase tracking-[0.08em] text-mutedCream">
+                          <span>{stop.duration}</span>
+                          <span>{stop.price}</span>
                         </span>
-                      </div>
-                      <p className="mt-4 text-xs font-black uppercase tracking-[0.12em] text-mutedCream opacity-75 transition group-hover:text-cream">Select service</p>
-                    </a>
-                  ))}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
             </article>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
-function ArrivalBoard({ mini = false }: { mini?: boolean }) {
+function ServicesMenu() {
   return (
-    <section id={mini ? undefined : "availability"} className={mini ? "px-4 pb-16 lg:px-8" : "px-4 py-20 lg:px-8"}>
-      {!mini && <SectionHeading eyebrow="Availability" title="Next Openings" copy="A quick look at the next appointment times available today." />}
-      <div className="interactive-frame mx-auto max-w-5xl rounded-sm border border-lineYellow/40 bg-black p-5 font-mono shadow-[inset_0_0_30px_rgba(228,183,46,.08)]">
-        <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3 text-xs uppercase tracking-[0.25em] text-lineYellow">
-          <span>Next Openings</span><span>Today</span>
-        </div>
-        <div className="grid gap-3 md:grid-cols-4">
-          {arrivals.map(([name, time]) => (
-            <div key={name} className="interactive-frame arrival-flicker rounded-sm border border-white/10 bg-[#15120a] p-4">
-              <p className="text-sm uppercase text-mutedCream">{name}</p>
-              <p className="mt-2 text-3xl font-black text-lineYellow">{time}</p>
+    <section id="services-menu" className="subway-grit bg-coal px-4 py-20 sm:px-8">
+      <div className="mx-auto max-w-7xl">
+        <SectionHeading eyebrow="Full Menu" title="Pricing Board" copy="Clear service names, duration, and price before you start booking." />
+        <div className="overflow-hidden border border-white/15 bg-black/55">
+          <div className="grid grid-cols-[1fr_6rem_5rem] gap-4 border-b border-lineYellow/35 bg-[#171307] px-4 py-3 text-xs font-black uppercase tracking-[0.14em] text-lineYellow md:grid-cols-[7rem_1fr_8rem_6rem_10rem]">
+            <span className="hidden md:block">Line</span>
+            <span>Service</span>
+            <span>Time</span>
+            <span>Price</span>
+            <span className="hidden md:block">Board</span>
+          </div>
+          {services.map((service) => (
+            <div key={service.code} className="grid grid-cols-[1fr_6rem_5rem] gap-4 border-b border-white/10 px-4 py-4 last:border-b-0 md:grid-cols-[7rem_1fr_8rem_6rem_10rem]">
+              <span className={`hidden text-xs font-black uppercase tracking-[0.1em] md:block ${lineStyles[service.line].text}`}>{service.route}</span>
+              <span>
+                <span className="font-mono text-xs font-black text-white/45">{service.code}</span>
+                <span className="ml-3 text-base font-black uppercase text-cream">{service.name}</span>
+              </span>
+              <span className="text-sm font-bold text-mutedCream">{service.duration}</span>
+              <span className="display-text text-3xl leading-none text-cream">{service.price}</span>
+              <a href="#booking" className="hidden text-xs font-black uppercase tracking-[0.08em] text-ticket hover:text-lineYellow md:block">Book Chair</a>
             </div>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
-
-function ChooseLine() {
-  return (
-    <section id="services" className="graffiti-wall relative overflow-hidden px-4 py-24 lg:px-8">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(242,239,231,.08),transparent_18rem),radial-gradient(circle_at_84%_18%,rgba(40,103,216,.12),transparent_26rem)]" />
-      <div className="absolute inset-0 bg-[repeating-radial-gradient(circle_at_20%_22%,rgba(255,255,255,.045)_0_1px,transparent_1px_7px)] opacity-55" />
-      <div className="absolute inset-0 subway-grit opacity-55" />
-      <div className="relative">
-        <SectionHeading eyebrow="Services" title="Choose a Service" copy="Haircuts, beards, kids cuts, and full grooming packages are easy to compare before you book." />
-      </div>
-      <div className="relative mx-auto grid max-w-7xl gap-5">
-        {serviceLines.map((route) => (
-          <article key={route.name} className="interactive-frame subway-grit relative overflow-hidden rounded-md border border-white/10 bg-white/[.035] p-5">
-            <p className={`spray-tag pointer-events-none absolute right-4 top-1 rotate-[-4deg] text-5xl uppercase leading-none opacity-20 md:text-7xl ${lineStyles[route.line].text}`}>
-              {route.initial}
-            </p>
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
-              <div className="w-56 shrink-0">
-                <p className={`text-xs font-black uppercase ${lineStyles[route.line].text}`}>{lineStyles[route.line].label}</p>
-                <h3 className="display-text text-4xl uppercase leading-none md:text-5xl">{route.name}</h3>
-                <p className="mt-1 text-sm font-bold text-mutedCream">{route.price}</p>
-              </div>
-              <div className="min-w-0 flex-1 overflow-x-auto pb-2">
-                <div className="flex min-w-max items-center gap-4">
-                  <div className={`h-2 w-12 rounded-full ${lineStyles[route.line].bg}`} />
-                  {route.options.map((option) => (
-                    <div key={option} className="group flex items-center gap-3">
-                      <span className={`h-7 w-7 rounded-full border-4 border-black ${lineStyles[route.line].bg} transition duration-300 group-hover:scale-125 ${lineStyles[route.line].shadow}`} />
-                      <span className="rounded-sm bg-black/80 px-3 py-2 text-sm font-black uppercase text-cream transition duration-300 group-hover:bg-black">{option}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <a href="#services-menu" className="interactive-button inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-md border border-white/20 bg-white/5 px-5 py-3 text-sm font-black uppercase text-cream hover:bg-white/10">
-                View Full Menu <ChevronRight className="h-4 w-4" />
-              </a>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-function ServicesMenu() {
-  return (
-    <section id="services-menu" className="subway-grit bg-coal px-4 py-20 lg:px-8">
-      <SectionHeading eyebrow="Menu" title="Full Services" copy="Clear timing, pricing, and details so you can pick the right appointment." />
-      <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {services.map((service) => (
-          <article key={service.name} className={`interactive-frame subway-grit relative overflow-hidden rounded-sm border bg-black/40 p-5 ${lineStyles[service.line].border}`}>
-            <span className={`spray-tag pointer-events-none absolute -right-3 bottom-5 rotate-[-9deg] text-5xl uppercase opacity-15 ${lineStyles[service.line].text}`}>
-              Tag
-            </span>
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <RouteDot label={service.name.charAt(0)} color={service.line} />
-              <span className="rounded bg-white/10 px-3 py-1 text-xs font-black uppercase">{lineStyles[service.line].label}</span>
-            </div>
-            <h3 className="display-text text-4xl uppercase">{service.name}</h3>
-            <p className="mt-3 min-h-16 text-mutedCream">{service.desc}</p>
-            <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
-              <span className="flex items-center gap-2 text-sm"><Clock3 className="h-4 w-4" />{service.duration}</span>
-              <span className="display-text text-3xl">{service.price}</span>
-            </div>
-            <a href="#booking" className="interactive-button mt-5 inline-flex w-full items-center justify-center rounded-sm bg-white px-4 py-3 text-sm font-black uppercase text-black">Book This Service</a>
-          </article>
-        ))}
       </div>
     </section>
   );
@@ -486,6 +366,7 @@ function BookingForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [form, setForm] = useState({ service: "", barber: "", date: "", time: "", name: "", phone: "", email: "", notes: "" });
   const required = useMemo(() => ["service", "barber", "date", "time", "name", "phone", "email"], []);
+  const chosenService = services.find((service) => service.name === form.service);
 
   function update(field: string, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -504,53 +385,73 @@ function BookingForm() {
   }
 
   return (
-    <section id="booking" className="relative overflow-hidden px-4 py-20 lg:px-8">
-      <div className="spray-tag pointer-events-none absolute left-4 top-24 hidden rotate-[-8deg] text-7xl uppercase leading-none text-lineGreen/20 lg:block">
-        No<br />Sleep
-      </div>
-      <SectionHeading eyebrow="Booking" title="Book Your Appointment" copy="Choose a service, barber, date, and time. Add notes if you have a preference." />
-      <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[.85fr_1.15fr]">
-        <div className="interactive-frame subway-grit rounded-sm border border-white/10 bg-black/45 p-6">
-          <CalendarDays className="h-10 w-10 text-lineYellow" />
-          <h3 className="display-text mt-4 text-5xl uppercase">Before You Book</h3>
-          <p className="mt-3 text-mutedCream">Appointments keep the shop moving, and walk-ins are welcome when a chair is open.</p>
-          <div className="interactive-frame mt-8 rounded-sm border border-lineYellow/40 bg-[#171307] p-5 font-mono text-sm uppercase">
-            <div className="flex justify-between text-lineYellow"><span>Shop</span><span>Barber Station</span></div>
-            <div className="mt-5 h-20 barcode rounded opacity-80" />
-            <p className="mt-5 text-mutedCream">Valid for one confirmed appointment.</p>
-          </div>
-        </div>
-        <form onSubmit={submit} className="interactive-frame ticket-edge rounded-sm bg-ticket p-5 text-black shadow-2xl md:p-8" noValidate>
-          {submitted ? (
-            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="flex min-h-[420px] flex-col items-center justify-center text-center">
-              <span className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-lineGreen text-white"><Check className="h-9 w-9" /></span>
-              <h3 className="display-text text-5xl uppercase">You are booked.</h3>
-              <p className="mt-3 max-w-md text-lg text-black/70">Your appointment details are saved in local component state and ready for a future booking API.</p>
-            </motion.div>
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2">
-              <Field label="Select Service" error={errors.service}>
-                <select value={form.service} onChange={(e) => update("service", e.target.value)} className="field">
-                  <option value="">Choose a service</option>
-                  {services.map((service) => <option key={service.name}>{service.name}</option>)}
-                </select>
-              </Field>
-              <Field label="Select Barber" error={errors.barber}>
-                <select value={form.barber} onChange={(e) => update("barber", e.target.value)} className="field">
-                  <option value="">Choose a barber</option>
-                  {barbers.map((barber) => <option key={barber.name}>{barber.name}</option>)}
-                </select>
-              </Field>
-              <Field label="Select Date" error={errors.date}><input className="field" type="date" value={form.date} onChange={(e) => update("date", e.target.value)} /></Field>
-              <Field label="Select Time" error={errors.time}><input className="field" type="time" value={form.time} onChange={(e) => update("time", e.target.value)} /></Field>
-              <Field label="Customer Name" error={errors.name}><input className="field" value={form.name} onChange={(e) => update("name", e.target.value)} /></Field>
-              <Field label="Phone Number" error={errors.phone}><input className="field" type="tel" value={form.phone} onChange={(e) => update("phone", e.target.value)} /></Field>
-              <Field label="Email" error={errors.email}><input className="field" type="email" value={form.email} onChange={(e) => update("email", e.target.value)} /></Field>
-              <Field label="Notes / Preferences"><textarea className="field min-h-28" value={form.notes} onChange={(e) => update("notes", e.target.value)} /></Field>
-              <button className="interactive-button mt-2 rounded-sm bg-lineRed px-5 py-4 text-sm font-black uppercase text-white md:col-span-2">Request Appointment</button>
+    <section id="booking" className="relative overflow-hidden px-4 py-24 sm:px-8">
+      <div className="absolute inset-0 subway-grit opacity-60" />
+      <div className="relative mx-auto max-w-7xl">
+        <SectionHeading eyebrow="Book Your Ride" title="Swipe In" copy="A simple kiosk flow: select your line, choose your conductor, pick arrival time, and book the chair." />
+        <div className="grid gap-6 lg:grid-cols-[1.08fr_.92fr]">
+          <form onSubmit={submit} className="ticket-kiosk" noValidate>
+            {submitted ? (
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="grid min-h-[520px] place-items-center text-center">
+                <div>
+                  <span className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-lineGreen text-white"><Check className="h-9 w-9" /></span>
+                  <h3 className="display-text text-6xl uppercase text-black">Ride Booked</h3>
+                  <p className="mt-3 max-w-md text-lg font-bold text-black/70">Your appointment details are held in the booking module and ready for a future booking API.</p>
+                </div>
+              </motion.div>
+            ) : (
+              <div>
+                <div className="mb-6 grid grid-cols-4 gap-2">
+                  {["Select Line", "Choose Conductor", "Pick Time", "Swipe In"].map((step, index) => (
+                    <div key={step} className="border border-black/25 bg-black/10 p-3">
+                      <span className="display-text text-3xl leading-none">{index + 1}</span>
+                      <p className="mt-1 text-[0.65rem] font-black uppercase tracking-[0.08em]">{step}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Field label="Select Line" error={errors.service}>
+                    <select value={form.service} onChange={(event) => update("service", event.target.value)} className="field">
+                      <option value="">Choose a service</option>
+                      {services.map((service) => <option key={service.code}>{service.name}</option>)}
+                    </select>
+                  </Field>
+                  <Field label="Choose Conductor" error={errors.barber}>
+                    <select value={form.barber} onChange={(event) => update("barber", event.target.value)} className="field">
+                      <option value="">Choose a barber</option>
+                      {barbers.map((barber) => <option key={barber.name}>{barber.name}</option>)}
+                    </select>
+                  </Field>
+                  <Field label="Select Date" error={errors.date}><input className="field" type="date" value={form.date} onChange={(event) => update("date", event.target.value)} /></Field>
+                  <Field label="Select Time" error={errors.time}><input className="field" type="time" value={form.time} onChange={(event) => update("time", event.target.value)} /></Field>
+                  <Field label="Customer Name" error={errors.name}><input className="field" value={form.name} onChange={(event) => update("name", event.target.value)} /></Field>
+                  <Field label="Phone Number" error={errors.phone}><input className="field" type="tel" value={form.phone} onChange={(event) => update("phone", event.target.value)} /></Field>
+                  <Field label="Email" error={errors.email}><input className="field" type="email" value={form.email} onChange={(event) => update("email", event.target.value)} /></Field>
+                  <Field label="Notes / Preferences"><textarea className="field min-h-28" value={form.notes} onChange={(event) => update("notes", event.target.value)} /></Field>
+                  <button className="ticket-button ticket-button-dark md:col-span-2">Swipe In</button>
+                </div>
+              </div>
+            )}
+          </form>
+          <aside className="ticket-stub">
+            <div className="flex items-center justify-between border-b border-black/25 pb-4">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-black/60">Ticket Preview</p>
+                <h3 className="display-text text-5xl uppercase leading-none text-black">Barber Station</h3>
+              </div>
+              <Ticket className="h-12 w-12 text-black/45" />
             </div>
-          )}
-        </form>
+            <div className="mt-6 grid gap-4 font-mono text-sm uppercase">
+              <TicketRow label="Service" value={form.service || "Select line"} />
+              <TicketRow label="Conductor" value={form.barber || "Choose conductor"} />
+              <TicketRow label="Time" value={form.time || "Pick arrival"} />
+              <TicketRow label="Price" value={chosenService?.price || "--"} />
+              <TicketRow label="Status" value={submitted ? "Confirmed" : "Pending swipe"} />
+            </div>
+            <div className="barcode mt-8 h-24 opacity-80" />
+            <p className="mt-5 text-xs font-black uppercase tracking-[0.12em] text-black/60">Late policy: call if you are more than 10 minutes behind schedule.</p>
+          </aside>
+        </div>
       </div>
     </section>
   );
@@ -558,28 +459,44 @@ function BookingForm() {
 
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
-    <label className="grid gap-2 text-sm font-black uppercase">
-      <span className="flex justify-between"><span>{label}</span>{error && <span className="text-lineRed">{error}</span>}</span>
+    <label className="grid gap-2 text-sm font-black uppercase text-black">
+      <span className="flex justify-between gap-3"><span>{label}</span>{error && <span className="text-lineRed">{error}</span>}</span>
       {children}
     </label>
   );
 }
 
+function TicketRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between gap-4 border-b border-black/15 pb-3">
+      <span className="text-black/55">{label}</span>
+      <span className="text-right font-black text-black">{value}</span>
+    </div>
+  );
+}
+
 function About() {
   return (
-    <section id="about" className="subway-grit bg-steel px-4 py-20 lg:px-8">
-      <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2">
-        <StationVisual label="Inside the Shop" />
+    <section id="about" className="bg-steel px-4 py-24 sm:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1fr_.9fr] lg:items-center">
+        <div className="station-photo-panel">
+          <div className="absolute inset-0 bg-[url('/images/barber-station-hero.png')] bg-cover bg-center opacity-70 grayscale" />
+          <div className="absolute inset-0 bg-black/45" />
+          <div className="relative mt-auto p-6">
+            <p className="station-eyebrow">Notice 718</p>
+            <h3 className="display-text text-7xl uppercase leading-none text-cream">Built in NYC</h3>
+          </div>
+        </div>
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.3em] text-lineYellow">About the Shop</p>
-          <h2 className="display-text mt-3 text-6xl uppercase leading-none md:text-8xl">Built in NYC. Cut for You.</h2>
-          <p className="mt-6 text-lg leading-8 text-mutedCream">Barber Station is a neighborhood shop for sharp haircuts, detailed beard work, and consistent service. We keep the energy bold, the chairs clean, and the appointment process simple.</p>
-          <div className="mt-7 grid gap-3 sm:grid-cols-2">
-            {["Clean fades and tapers", "Skilled barbers", "Appointments and walk-ins", "Sanitized tools", "Family-friendly cuts"].map((item) => (
-              <div key={item} className="interactive-frame rounded-sm border border-white/10 bg-black/35 p-4 font-bold">{item}</div>
+          <SectionHeading eyebrow="Our Station" title="Cut for You" copy="Barber Station is a neighborhood shop for sharp haircuts, detailed beard work, and consistent service." />
+          <div className="grid gap-3 sm:grid-cols-2">
+            {["Clean fades and tapers", "Skilled barbers", "Appointments and walk-ins", "Sanitized tools", "Family-friendly cuts"].map((item, index) => (
+              <div key={item} className="station-notice">
+                <span className="font-mono text-xs text-lineYellow">0{index + 1}</span>
+                <span>{item}</span>
+              </div>
             ))}
           </div>
-          <p className="mt-7 rotate-[-2deg] text-3xl font-black text-lineRed">Stay sharp</p>
         </div>
       </div>
     </section>
@@ -588,33 +505,32 @@ function About() {
 
 function Barbers() {
   return (
-    <section id="barbers" className="relative overflow-hidden px-4 py-20 lg:px-8">
-      <div className="spray-tag pointer-events-none absolute right-2 top-16 hidden rotate-[10deg] text-7xl uppercase leading-none text-lineYellow/20 md:block">
-        Crew<br />Only
-      </div>
-      <SectionHeading eyebrow="Barbers" title="Meet the Barbers" copy="Experienced barbers with clear specialties, schedules, and booking options." />
-      <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-2 xl:grid-cols-4">
-        {barbers.map((barber) => (
-          <article key={barber.name} className="interactive-frame overflow-hidden rounded-sm border border-white/10 bg-white/[.035]">
-            <div className="relative h-56 bg-gradient-to-br from-zinc-700 via-zinc-950 to-black">
-              <div className="absolute inset-0 scratch-lines opacity-50" />
-              <p className={`spray-tag paint-drip pointer-events-none absolute left-5 top-16 rotate-[-7deg] text-5xl uppercase ${lineStyles[barber.line].text} opacity-45`}>
-                {barber.name}
-              </p>
-              <div className={`absolute left-5 top-5 h-28 w-28 rounded-full ${lineStyles[barber.line].bg} opacity-20 blur-2xl`} />
-              <Scissors className="absolute bottom-6 right-6 h-16 w-16 text-white/15" />
-            </div>
-            <div className="p-5">
-              <span className={`rounded px-3 py-1 text-xs font-black uppercase text-white ${lineStyles[barber.line].bg}`}>{barber.role}</span>
-              <h3 className="display-text mt-4 text-4xl uppercase">{barber.name}</h3>
-              <p className="mt-2 text-sm text-mutedCream">{barber.specialty}</p>
-              <div className="mt-4 grid gap-2 border-t border-white/10 pt-4 text-sm">
-                <span>{barber.years}</span><span>Schedule: {barber.duty}</span>
+    <section id="barbers" className="relative overflow-hidden px-4 py-24 sm:px-8">
+      <div className="relative mx-auto max-w-7xl">
+        <SectionHeading eyebrow="Our Conductors" title="Chair Operators" copy="Experienced barbers with clear specialties, schedules, next availability, and booking options." />
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          {barbers.map((barber) => (
+            <article key={barber.name} className="conductor-card">
+              <div className="relative h-64 overflow-hidden bg-gradient-to-br from-zinc-700 via-zinc-950 to-black">
+                <div className="absolute inset-0 scratch-lines opacity-50" />
+                <div className={`absolute left-5 top-5 h-24 w-24 ${lineStyles[barber.line].bg} opacity-25 blur-2xl`} />
+                <p className={`spray-tag absolute left-5 top-20 rotate-[-7deg] text-6xl uppercase leading-none ${lineStyles[barber.line].text} opacity-50`}>{barber.name}</p>
+                <UserRound className="absolute bottom-5 right-5 h-20 w-20 text-white/15" />
               </div>
-              <a href="#booking" className="interactive-button mt-5 inline-flex w-full justify-center rounded-sm border border-white/15 px-4 py-3 text-sm font-black uppercase">Book with {barber.name}</a>
-            </div>
-          </article>
-        ))}
+              <div className="p-5">
+                <span className={`inline-flex px-3 py-1 text-xs font-black uppercase text-white ${lineStyles[barber.line].bg}`}>{barber.role}</span>
+                <h3 className="display-text mt-4 text-5xl uppercase leading-none text-cream">{barber.name}</h3>
+                <p className="mt-3 text-sm font-bold text-mutedCream">{barber.note}</p>
+                <p className="mt-3 text-sm text-mutedCream">{barber.specialty}</p>
+                <div className="mt-5 grid gap-2 border-y border-white/10 py-4 text-sm font-bold text-mutedCream">
+                  <span>Schedule: {barber.schedule}</span>
+                  <span>Next available: <span className={lineStyles[barber.line].text}>{barber.next}</span></span>
+                </div>
+                <a href="#booking" className="ticket-button ticket-button-secondary mt-5 w-full">Book This Conductor</a>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -622,22 +538,23 @@ function Barbers() {
 
 function Gallery() {
   return (
-    <section id="gallery" className="subway-grit bg-coal px-4 py-20 lg:px-8">
-      <SectionHeading eyebrow="Gallery" title="Recent Work" copy="Cuts, fades, beards, shop details, and behind-the-chair atmosphere." />
-      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 lg:grid-cols-3">
-        {gallery.map((item, index) => (
-          <div key={item} className={`interactive-frame group relative min-h-56 overflow-hidden rounded-sm border border-white/10 bg-gradient-to-br ${index % 4 === 0 ? "from-lineRed/50" : index % 4 === 1 ? "from-lineBlue/50" : index % 4 === 2 ? "from-lineYellow/50" : "from-lineGreen/50"} via-zinc-900 to-black`}>
-            <div className="absolute inset-0 bg-tile bg-[length:36px_36px] opacity-20" />
-            <div className="absolute inset-0 scratch-lines opacity-35" />
-            <p className="spray-tag pointer-events-none absolute left-4 top-5 rotate-[-8deg] text-4xl uppercase leading-none text-white/20 md:text-6xl">
-              BKS
-            </p>
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black to-transparent p-5">
-              <p className="font-black uppercase">{item}</p>
-              <p className="text-sm text-mutedCream opacity-0 transition group-hover:opacity-100">View Style</p>
-            </div>
-          </div>
-        ))}
+    <section id="gallery" className="subway-grit bg-coal px-4 py-24 sm:px-8">
+      <div className="mx-auto max-w-7xl">
+        <SectionHeading eyebrow="Station Archive" title="Cuts From The Platform" copy="A contact-sheet archive of cuts, beard work, shop details, and after-hours texture." />
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+          {gallery.map(([label, title, line], index) => (
+            <a key={`${label}-${title}`} href="#booking" className={`archive-tile group ${index === 0 || index === 5 ? "lg:row-span-2" : ""}`}>
+              <div className={`absolute inset-0 bg-gradient-to-br ${line === "red" ? "from-lineRed/55" : line === "blue" ? "from-lineBlue/55" : line === "yellow" ? "from-lineYellow/55" : "from-lineGreen/55"} via-zinc-900 to-black transition duration-500 group-hover:scale-105`} />
+              <div className="absolute inset-0 bg-tile bg-[length:32px_32px] opacity-20" />
+              <div className="absolute inset-0 scratch-lines opacity-35" />
+              <div className="absolute left-4 top-4 bg-ticket px-3 py-2 text-xs font-black uppercase text-black opacity-0 transition group-hover:opacity-100">View Cut</div>
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black to-transparent p-5">
+                <p className="font-mono text-xs font-black uppercase tracking-[0.12em] text-white/55">{label}</p>
+                <p className="mt-1 text-xl font-black uppercase text-cream">{title}</p>
+              </div>
+            </a>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -645,16 +562,21 @@ function Gallery() {
 
 function Testimonials() {
   return (
-    <section className="px-4 py-20 lg:px-8">
-      <SectionHeading eyebrow="Reviews" title="Customer Reviews" copy="First names only. Real feedback from customers who trust the shop." />
-      <div className="mx-auto grid max-w-6xl gap-5 md:grid-cols-3">
-        {reviews.map(([quote, name]) => (
-          <article key={name} className="interactive-frame ticket-edge rounded-sm bg-ticket p-6 text-black">
-            <div className="mb-4 flex gap-1">{Array.from({ length: 5 }).map((_, i) => <Star key={i} className="h-5 w-5 fill-lineYellow text-lineYellow" />)}</div>
-            <p className="text-lg font-bold">"{quote}"</p>
-            <p className="mt-5 font-black uppercase">- {name}</p>
-          </article>
-        ))}
+    <section className="px-4 py-24 sm:px-8">
+      <div className="mx-auto max-w-7xl">
+        <SectionHeading eyebrow="Word on the Platform" title="Customer Signals" copy="Short notes from customers who trust the shop." />
+        <div className="grid gap-5 md:grid-cols-3">
+          {reviews.map(([quote, name, code]) => (
+            <article key={name} className="review-ticket">
+              <div className="mb-4 flex items-center justify-between">
+                <span className="font-mono text-sm font-black uppercase text-black/55">{code}</span>
+                <div className="flex gap-1">{Array.from({ length: 5 }).map((_, index) => <Star key={index} className="h-4 w-4 fill-lineYellow text-lineYellow" />)}</div>
+              </div>
+              <p className="text-lg font-black leading-7 text-black">"{quote}"</p>
+              <p className="mt-5 font-black uppercase text-black/65">- {name}</p>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -662,37 +584,34 @@ function Testimonials() {
 
 function Location() {
   return (
-    <section id="contact" className="relative overflow-hidden px-4 py-20 lg:px-8">
-      <div className="spray-tag pointer-events-none absolute left-6 bottom-10 hidden rotate-[4deg] text-7xl uppercase leading-none text-lineRed/20 lg:block">
-        End<br />Line
-      </div>
-      <SectionHeading eyebrow="Location" title="Visit the Shop" copy="Find our Brooklyn barbershop, check hours, or call before you come in." />
-      <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-2">
-        <div className="interactive-frame subway-grit rounded-sm border border-white/10 bg-black/45 p-6">
-          <h3 className="display-text text-5xl uppercase">Shop Location</h3>
-          <div className="mt-6 grid gap-4 text-mutedCream">
-            <p className="flex gap-3"><MapPin className="h-5 w-5 text-lineRed" />123 Barber Station Blvd, Brooklyn, NY 11201</p>
-            <p className="flex gap-3"><Phone className="h-5 w-5 text-lineBlue" />(718) 555-0198</p>
-            <p className="flex gap-3"><Mail className="h-5 w-5 text-lineYellow" />hello@barberstation.demo</p>
-            <p className="flex gap-3"><CalendarDays className="h-5 w-5 text-lineGreen" />Mon-Fri 10 AM-8 PM, Sat 9 AM-7 PM, Sun 11 AM-5 PM</p>
+    <section id="contact" className="relative overflow-hidden bg-[#060606] px-4 py-24 sm:px-8">
+      <div className="absolute inset-0 bg-tile bg-[length:46px_46px] opacity-10" />
+      <div className="relative mx-auto max-w-7xl">
+        <SectionHeading eyebrow="Visit the Shop" title="End Line: Brooklyn" copy="Find the shop, check hours, call ahead, or get directions." />
+        <div className="grid gap-6 lg:grid-cols-[.95fr_1.05fr]">
+          <div className="station-info-board">
+            <h3 className="display-text text-6xl uppercase leading-none text-cream">Station Info</h3>
+            <div className="mt-6 grid gap-4 text-mutedCream">
+              <p className="flex gap-3"><MapPin className="h-5 w-5 text-lineRed" />123 Barber Station Blvd, Brooklyn, NY 11201</p>
+              <p className="flex gap-3"><Phone className="h-5 w-5 text-lineBlue" />(718) 555-0198</p>
+              <p className="flex gap-3"><Mail className="h-5 w-5 text-lineYellow" />hello@barberstation.demo</p>
+              <p className="flex gap-3"><CalendarDays className="h-5 w-5 text-lineGreen" />Mon-Fri 10 AM-8 PM, Sat 9 AM-7 PM, Sun 11 AM-5 PM</p>
+            </div>
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <CTAButton href="#">Get Directions</CTAButton>
+              <CTAButton href="tel:17185550198" variant="secondary">Call the Shop</CTAButton>
+            </div>
           </div>
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <CTAButton href="#">Get Directions</CTAButton>
-            <CTAButton href="tel:17185550198" variant="secondary">Call the Shop</CTAButton>
+          <div className="transit-map-panel">
+            <div className="absolute left-1/2 top-0 h-full w-2 -translate-x-1/2 bg-lineRed" />
+            <div className="absolute left-0 top-1/2 h-2 w-full -translate-y-1/2 bg-lineBlue" />
+            <div className="absolute left-[20%] top-[22%] h-2 w-[70%] rotate-[-18deg] bg-lineYellow" />
+            <div className="absolute left-[15%] top-[72%] h-2 w-[72%] rotate-[12deg] bg-lineGreen" />
+            <div className="absolute left-1/2 top-1/2 flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-8 border-black bg-ticket text-black">
+              <Scissors className="h-9 w-9" />
+            </div>
+            <span className="absolute left-5 top-5 bg-black px-4 py-2 font-mono text-sm uppercase text-white">Platform 718</span>
           </div>
-        </div>
-        <div className="interactive-frame subway-grit relative min-h-80 overflow-hidden rounded-sm border border-white/10 bg-zinc-900 grayscale">
-          <div className="absolute inset-0 bg-tile bg-[length:48px_48px] opacity-50" />
-          <div className="absolute inset-0 scratch-lines opacity-40" />
-          <p className="spray-tag pointer-events-none absolute right-6 bottom-6 rotate-[-10deg] text-6xl uppercase text-white/15">
-            718
-          </p>
-          <div className="absolute left-1/2 top-0 h-full w-2 -translate-x-1/2 bg-lineRed" />
-          <div className="absolute left-0 top-1/2 h-2 w-full -translate-y-1/2 bg-lineBlue" />
-          <div className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-8 border-black bg-lineYellow text-black">
-            <Scissors className="h-8 w-8" />
-          </div>
-          <span className="absolute left-5 top-5 rounded bg-black px-4 py-2 font-mono text-sm uppercase text-white">Shop</span>
         </div>
       </div>
     </section>
@@ -701,35 +620,36 @@ function Location() {
 
 function Footer() {
   return (
-    <footer className="rounded-t-[1.7rem] border border-white/10 bg-black px-4 py-14 shadow-[0_-14px_45px_rgba(0,0,0,.42)] lg:px-8">
+    <footer className="border-t border-white/15 bg-black px-4 py-14 sm:px-8">
       <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-2 xl:grid-cols-[1.2fr_1fr_1fr_1.2fr]">
         <div>
-          <h2 className="display-text text-4xl uppercase leading-none">Barber<br />Station</h2>
+          <h2 className="display-text text-5xl uppercase leading-none">Barber<br />Station</h2>
           <div className="mt-4 flex gap-2">
-            <span className="h-3 w-3 rounded-full bg-lineRed" />
-            <span className="h-3 w-3 rounded-full bg-lineBlue" />
-            <span className="h-3 w-3 rounded-full bg-lineYellow" />
-            <span className="h-3 w-3 rounded-full bg-lineGreen" />
+            <span className="h-3 w-10 bg-lineRed" />
+            <span className="h-3 w-10 bg-lineBlue" />
+            <span className="h-3 w-10 bg-lineYellow" />
+            <span className="h-3 w-10 bg-lineGreen" />
           </div>
           <p className="mt-7 text-xl font-black text-mutedCream">Next Stop: A Better You</p>
         </div>
         <div>
-          <h3 className="display-text text-4xl uppercase">Visit Us</h3>
-          <p className="mt-6 max-w-56 text-xl font-bold leading-8 text-mutedCream">123 Barber Station Blvd<br />Brooklyn, NY 11201</p>
+          <h3 className="display-text text-4xl uppercase">Visit</h3>
+          <p className="mt-5 max-w-56 text-lg font-bold leading-7 text-mutedCream">123 Barber Station Blvd<br />Brooklyn, NY 11201</p>
         </div>
         <div>
           <h3 className="display-text text-4xl uppercase">Hours</h3>
-          <p className="mt-6 text-xl font-bold leading-8 text-mutedCream">Mon-Fri: 10AM-8PM<br />Sat: 9AM-7PM<br />Sun: 11AM-5PM</p>
+          <p className="mt-5 text-lg font-bold leading-7 text-mutedCream">Mon-Fri: 10AM-8PM<br />Sat: 9AM-7PM<br />Sun: 11AM-5PM</p>
         </div>
         <form className="grid gap-4">
           <label className="display-text text-4xl uppercase" htmlFor="newsletter">Stay On Track</label>
-          <input id="newsletter" className="interactive-frame min-h-16 w-full rounded-none border border-white/15 bg-white/55 px-5 text-lg font-black text-black placeholder:text-black/40" placeholder="Enter your email" type="email" />
-          <button className="interactive-button min-h-16 bg-ticket px-5 text-base font-black uppercase text-black">Join</button>
+          <input id="newsletter" className="field min-h-16" placeholder="Enter your email" type="email" />
+          <button className="ticket-button ticket-button-primary min-h-16">Join</button>
         </form>
       </div>
-      <div className="mx-auto mt-12 max-w-7xl border-t border-white/10 pt-7 text-xl font-black text-mutedCream">
+      <div className="mx-auto mt-12 max-w-7xl border-t border-white/10 pt-7 text-sm font-black uppercase tracking-[0.12em] text-mutedCream">
         <p>&copy; 2026 Barber Station. All rights reserved. Stay sharp. Ride clean.</p>
       </div>
+      <a href="#booking" className="mobile-sticky-cta">Book Now</a>
     </footer>
   );
 }
@@ -737,17 +657,6 @@ function Footer() {
 export default function Home() {
   return (
     <main className="lg:pl-72">
-      <style jsx global>{`
-        .field {
-          width: 100%;
-          border-radius: 0.375rem;
-          border: 1px solid rgba(0, 0, 0, 0.18);
-          background: rgba(255, 255, 255, 0.45);
-          padding: 0.85rem 0.9rem;
-          color: #080808;
-          font-weight: 700;
-        }
-      `}</style>
       <Header />
       <StationSidebar />
       <Hero />
