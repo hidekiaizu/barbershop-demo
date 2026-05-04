@@ -7,12 +7,17 @@ import {
   Check,
   ChevronRight,
   Clock3,
+  GalleryHorizontalEnd,
+  Home as HomeIcon,
   Mail,
   MapPin,
   Menu,
   Phone,
   Scissors,
+  ShoppingBag,
   Star,
+  TrainFront,
+  UserRound,
   X,
 } from "lucide-react";
 
@@ -57,6 +62,20 @@ const arrivals = [
   ["Cut + Beard", "1:30 PM"],
 ];
 
+const heroArrivals = [
+  { name: "Haircuts", time: "2 min", line: "red" as const, label: "B" },
+  { name: "Beard Lineup", time: "4 min", line: "blue" as const, label: "S" },
+  { name: "Kids Cuts", time: "7 min", line: "yellow" as const, label: "Y" },
+  { name: "VIP Experience", time: "10 min", line: "green" as const, label: "G" },
+];
+
+const routeMap = [
+  { line: "red" as const, title: "Red Line - Haircuts", price: "From $35", stops: ["Classic Cut", "Skin Fade", "Taper", "Scissor Cut"] },
+  { line: "blue" as const, title: "Blue Line - Beard", price: "From $20", stops: ["Beard Trim", "Beard Lineup", "Hot Towel Shave"] },
+  { line: "yellow" as const, title: "Yellow Line - Kids", price: "From $25", stops: ["Kids Cut", "Student Cut", "First Cut"] },
+  { line: "green" as const, title: "Green Line - VIP / Packages", price: "From $65", stops: ["Cut + Beard", "Full Service", "Groom Package"] },
+];
+
 const gallery = ["Crisp Fade", "Barber Chair", "Beard Work", "Shop Detail", "Clean Taper", "After Hours"];
 const reviews = [
   ["Best fade in the neighborhood. Clean, fast, and professional.", "Jay"],
@@ -99,7 +118,7 @@ function CTAButton({ children, href = "#booking", variant = "primary" }: { child
 function Header() {
   const [open, setOpen] = useState(false);
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-black/75 backdrop-blur-xl">
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-black/75 backdrop-blur-xl lg:hidden">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8" aria-label="Main navigation">
         <a href="#home" className="group">
           <div className="display-text text-2xl uppercase leading-none text-cream">Barber Station</div>
@@ -139,12 +158,65 @@ function Header() {
   );
 }
 
+function StationSidebar() {
+  const sideNav = [
+    { label: "Home", href: "#home", icon: HomeIcon },
+    { label: "Our Station", href: "#about", icon: TrainFront },
+    { label: "Services", href: "#services", icon: Scissors },
+    { label: "Barbers", href: "#barbers", icon: UserRound },
+    { label: "Schedule", href: "#booking", icon: Clock3 },
+    { label: "Gallery", href: "#gallery", icon: GalleryHorizontalEnd },
+    { label: "Shop", href: "#services-menu", icon: ShoppingBag },
+    { label: "Contact", href: "#contact", icon: Mail },
+  ];
+
+  return (
+    <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 overflow-y-auto border-r border-white/15 bg-[#090909]/95 px-6 py-6 shadow-[18px_0_60px_rgba(0,0,0,.45)] lg:block">
+      <div className="absolute inset-0 bg-tile bg-[length:32px_32px] opacity-10" />
+      <div className="relative">
+        <a href="#home" className="block">
+          <h1 className="display-text text-4xl uppercase leading-[.86] text-cream xl:text-5xl">Barber<br />Station</h1>
+          <div className="mt-4 flex gap-2">
+            <RouteDot label="B" color="red" />
+            <RouteDot label="S" color="blue" />
+            <RouteDot label="C" color="yellow" />
+          </div>
+          <p className="mt-4 border-b border-white/10 pb-4 text-[0.64rem] font-black uppercase tracking-[0.24em] text-mutedCream">Next Stop / A Better You</p>
+        </a>
+        <nav className="mt-5 border-y border-white/10" aria-label="Desktop station navigation">
+          {sideNav.map(({ label, href, icon: Icon }) => (
+            <a key={label} href={href} className="flex min-h-12 items-center gap-4 border-b border-white/10 text-xs font-black uppercase tracking-[0.08em] text-mutedCream transition last:border-b-0 hover:bg-white/[.04] hover:text-cream">
+              <Icon className="h-5 w-5 text-white/55" />
+              {label}
+            </a>
+          ))}
+        </nav>
+        <div className="mt-5 border border-white/15 bg-black/75 p-3 text-center">
+          <p className="display-text text-2xl uppercase leading-none text-cream xl:text-3xl">Walk-ins<br />Welcome</p>
+          <p className="mt-3 text-[0.66rem] font-black uppercase tracking-[0.18em] text-mutedCream">No appointment?</p>
+          <p className="text-xs font-black uppercase text-lineRed">We got you</p>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
 function StationVisual({ label = "Barber Station" }: { label?: string }) {
   return (
-    <div className="interactive-frame relative min-h-[520px] overflow-hidden rounded-sm border border-white/15 bg-steel shadow-2xl">
+    <div className="interactive-frame subway-grit relative min-h-[520px] overflow-hidden rounded-sm border border-white/15 bg-steel shadow-2xl">
       <div className="absolute inset-0 bg-tile bg-[length:76px_76px] opacity-55" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_20%,rgba(242,239,231,.12),transparent_24rem)]" />
+      <div className="absolute inset-0 scratch-lines opacity-45 mix-blend-screen" />
       <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/85 to-transparent" />
+      <p className="spray-tag pointer-events-none absolute -left-4 top-48 rotate-[-11deg] text-7xl uppercase leading-none text-lineBlue/20 md:text-9xl">
+        Fade
+      </p>
+      <p className="spray-tag paint-drip pointer-events-none absolute right-4 top-52 rotate-[8deg] text-5xl uppercase leading-none text-lineRed/35 md:text-7xl [--drip:rgba(215,51,47,.42)]">
+        BRC
+      </p>
+      <p className="spray-tag pointer-events-none absolute bottom-44 left-8 rotate-[3deg] text-3xl uppercase text-lineYellow/35 md:text-5xl">
+        Local
+      </p>
       <p className="pointer-events-none absolute left-10 top-8 display-text text-[5.8rem] uppercase leading-none text-white/[.055] md:text-[7.5rem]">
         {label}
       </p>
@@ -186,34 +258,135 @@ function StationVisual({ label = "Barber Station" }: { label?: string }) {
 
 function Hero() {
   return (
-    <section id="home" className="relative min-h-screen overflow-hidden px-4 pb-10 pt-28 lg:px-8">
-      <div className="absolute inset-0 bg-tile bg-[length:96px_96px] opacity-[.13]" />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.86),rgba(0,0,0,.38)_45%,rgba(0,0,0,.85))]" />
-      <div className="absolute bottom-0 left-0 right-0 h-16 bg-lineYellow/20" />
-      <div className="absolute bottom-0 left-0 right-0 h-10 bg-black/80" />
-      <div className="mx-auto grid min-h-[calc(100vh-7rem)] max-w-7xl items-center gap-10 lg:grid-cols-[.86fr_1.14fr]">
-        <motion.div className="relative z-10" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-          <p className="mb-5 text-sm font-black uppercase text-mutedCream">Now Boarding</p>
-          <h1 className="display-text max-w-3xl uppercase leading-[.78] text-cream">
-            <span className="block text-5xl md:text-7xl">Welcome to</span>
-            <span className="block text-[5.6rem] sm:text-[7.2rem] md:text-[10rem]">Barber</span>
-            <span className="text-outline block text-[4.7rem] sm:text-[6.2rem] md:text-[8.8rem]">Station</span>
-          </h1>
-          <p className="mt-8 max-w-xl display-text text-5xl uppercase leading-[.9] text-lineYellow md:text-7xl">
-            Next Stop:<br />A Better You
-          </p>
-          <p className="mt-6 max-w-2xl text-base font-bold leading-7 text-mutedCream md:text-lg">Fresh cuts, sharp fades, clean shaves, and confidence - running on time in the heart of the city.</p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <CTAButton>Book Your Cut</CTAButton>
-            <CTAButton href="#services" variant="secondary">Explore the Station</CTAButton>
+    <section id="home" className="relative overflow-hidden bg-black pt-20 lg:pt-0">
+        <div className="relative min-h-screen overflow-hidden">
+          <div className="subway-platform relative min-h-[720px] overflow-hidden border-b border-white/15 px-4 py-8 sm:px-8 lg:min-h-[73vh] lg:px-16">
+            <div className="absolute inset-0 subway-grit opacity-65" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.9)_0%,rgba(0,0,0,.58)_39%,rgba(0,0,0,.24)_64%,rgba(0,0,0,.72)_100%)]" />
+            <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-black via-black/70 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-t from-black via-black/70 to-transparent" />
+
+            <div className="station-sign absolute left-[24%] top-12 hidden w-[48rem] rotate-[-3deg] border border-white/15 bg-[#080808]/95 px-7 py-5 shadow-[0_24px_70px_rgba(0,0,0,.7)] xl:block">
+              <div className="flex items-center justify-between gap-5">
+                <div>
+                  <p className="display-text text-6xl uppercase leading-none text-cream">Barber Station</p>
+                  <p className="mt-2 text-2xl font-black uppercase text-mutedCream">Next Stop: A Better You</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <RouteDot label="B" color="red" />
+                  <RouteDot label="S" color="blue" />
+                  <RouteDot label="C" color="yellow" />
+                  <ChevronRight className="h-20 w-20 text-ticket" />
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute right-0 top-0 hidden h-28 w-48 bg-lineRed px-7 py-6 xl:block">
+              <p className="text-sm font-black uppercase tracking-[0.22em] text-white/80">Book<br />Now</p>
+            </div>
+
+            <div className="absolute right-10 top-60 hidden border border-white/15 bg-black/80 p-5 text-center xl:block">
+              <p className="text-lg font-black uppercase tracking-[0.12em] text-white/60">Track</p>
+              <p className="display-text text-7xl uppercase leading-none text-white/55">1</p>
+            </div>
+
+            <motion.div className="relative z-10 pt-12 lg:max-w-[42rem] lg:pt-72" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+              <h1 className="display-text max-w-4xl uppercase leading-[.88] text-cream">
+                <span className="block text-[3.5rem] sm:text-[5.4rem] lg:text-[6.2rem]">This Isn't Just</span>
+                <span className="block text-[3.45rem] sm:text-[5.25rem] lg:text-[6rem]">A Barbershop.</span>
+                <span className="block text-[3.65rem] text-lineRed sm:text-[5.55rem] lg:text-[6.4rem]">It's A Station.</span>
+              </h1>
+              <p className="mt-5 max-w-xl text-base font-bold leading-7 text-mutedCream">Subway grit, sharp fades, clean shaves, and appointments that move on time.</p>
+              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                <a href="#booking" className="interactive-button inline-flex min-h-16 items-center justify-center gap-4 bg-ticket px-7 text-sm font-black uppercase tracking-[0.08em] text-black">
+                  Enter The Station <ChevronRight className="h-6 w-6" />
+                </a>
+                <a href="#services" className="interactive-button inline-flex min-h-16 items-center justify-center gap-4 border border-white/35 bg-black/45 px-7 text-sm font-black uppercase tracking-[0.08em] text-cream">
+                  Explore Services <TrainFront className="h-6 w-6" />
+                </a>
+              </div>
+            </motion.div>
+
+            <HeroArrivals />
+
+            <div className="absolute bottom-8 left-[46%] hidden h-36 w-52 -translate-x-1/2 rounded-t-full border border-white/10 bg-black/80 shadow-[0_0_80px_rgba(228,183,46,.18)] lg:block">
+              <div className="absolute left-12 top-12 h-9 w-9 rounded-full bg-ticket/80 blur-sm" />
+              <div className="absolute right-12 top-12 h-9 w-9 rounded-full bg-ticket/80 blur-sm" />
+            </div>
           </div>
-        </motion.div>
-        <motion.div className="relative z-10 lg:-mr-16" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.15 }}>
-          <StationVisual />
-        </motion.div>
+
+          <HeroRouteMap />
       </div>
-      <a href="#booking" className="fixed right-0 top-1/2 z-30 hidden -translate-y-1/2 rounded-l-md bg-lineRed px-3 py-5 text-xs font-black uppercase text-white shadow-glow [writing-mode:vertical-rl] md:block">Book Now</a>
     </section>
+  );
+}
+
+function HeroArrivals() {
+  return (
+    <div className="relative z-10 mt-10 border border-white/15 bg-black/80 p-4 shadow-[0_22px_60px_rgba(0,0,0,.55)] lg:absolute lg:bottom-16 lg:right-16 lg:mt-0 lg:w-[28rem]">
+      <div className="mb-3 flex items-center justify-between border-b border-white/10 pb-3 font-mono text-xs font-black uppercase tracking-[0.16em] text-mutedCream">
+        <span>Next Arrivals</span>
+        <span>10:24 AM</span>
+      </div>
+      <div className="grid gap-0">
+        {heroArrivals.map((item) => (
+          <div key={item.name} className="grid grid-cols-[2.4rem_1fr_auto] items-center gap-3 border-b border-white/10 py-3 last:border-b-0">
+            <RouteDot label={item.label} color={item.line} />
+            <span className="font-black uppercase tracking-[0.08em] text-mutedCream">{item.name}</span>
+            <span className={`display-text text-3xl uppercase ${lineStyles[item.line].text}`}>{item.time}</span>
+          </div>
+        ))}
+      </div>
+      <p className="mt-3 border-t border-white/10 pt-3 text-center text-[0.65rem] font-black uppercase tracking-[0.18em] text-white/50">Track your cut across the barber station</p>
+    </div>
+  );
+}
+
+function HeroRouteMap() {
+  return (
+    <div className="relative border-b border-white/10 bg-[#050505] px-4 py-10 sm:px-8 lg:px-16">
+      <div className="absolute inset-0 bg-tile bg-[length:44px_44px] opacity-10" />
+      <div className="relative mx-auto max-w-7xl">
+        <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-lineYellow">Service Lines</p>
+            <h2 className="display-text mt-2 text-5xl uppercase leading-none text-cream md:text-7xl">Pick Your Stop</h2>
+          </div>
+          <a href="#booking" className="interactive-button inline-flex min-h-12 items-center justify-center gap-3 border border-white/20 bg-ticket px-5 text-sm font-black uppercase text-black">
+            Book A Chair <ChevronRight className="h-5 w-5" />
+          </a>
+        </div>
+        <div className="grid gap-4">
+          {routeMap.map((route) => (
+            <article key={route.title} className="interactive-frame subway-grit overflow-hidden border border-white/10 bg-white/[.045] p-4 shadow-[0_18px_55px_rgba(0,0,0,.28)] md:p-5">
+              <div className="grid gap-5 xl:grid-cols-[16rem_1fr] xl:items-center">
+                <div className="flex items-center gap-4">
+                  <RouteDot label={route.title.charAt(0)} color={route.line} />
+                  <div>
+                    <h3 className={`text-sm font-black uppercase tracking-[0.12em] ${lineStyles[route.line].text}`}>{route.title}</h3>
+                    <p className="mt-1 text-sm font-bold text-mutedCream">{route.price}</p>
+                  </div>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  {route.stops.map((stop, index) => (
+                    <a key={stop} href="#booking" className="group relative min-h-24 overflow-hidden border border-white/10 bg-black/55 p-4 transition hover:-translate-y-1 hover:border-white/30 hover:bg-black/75">
+                      <div className={`absolute left-0 top-0 h-1 w-full ${lineStyles[route.line].bg}`} />
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="max-w-[10rem] text-base font-black uppercase tracking-[0.06em] text-cream">{stop}</p>
+                        <span className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-ticket ${lineStyles[route.line].bg} text-xs font-black text-white shadow-lg`}>
+                          {index + 1}
+                        </span>
+                      </div>
+                      <p className="mt-4 text-xs font-black uppercase tracking-[0.12em] text-mutedCream opacity-75 transition group-hover:text-cream">Select service</p>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -240,15 +413,19 @@ function ArrivalBoard({ mini = false }: { mini?: boolean }) {
 
 function ChooseLine() {
   return (
-    <section id="services" className="relative overflow-hidden px-4 py-24 lg:px-8">
+    <section id="services" className="graffiti-wall relative overflow-hidden px-4 py-24 lg:px-8">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(242,239,231,.08),transparent_18rem),radial-gradient(circle_at_84%_18%,rgba(40,103,216,.12),transparent_26rem)]" />
       <div className="absolute inset-0 bg-[repeating-radial-gradient(circle_at_20%_22%,rgba(255,255,255,.045)_0_1px,transparent_1px_7px)] opacity-55" />
+      <div className="absolute inset-0 subway-grit opacity-55" />
       <div className="relative">
         <SectionHeading eyebrow="Services" title="Choose a Service" copy="Haircuts, beards, kids cuts, and full grooming packages are easy to compare before you book." />
       </div>
       <div className="relative mx-auto grid max-w-7xl gap-5">
         {serviceLines.map((route) => (
-          <article key={route.name} className="interactive-frame overflow-hidden rounded-md border border-white/10 bg-white/[.035] p-5">
+          <article key={route.name} className="interactive-frame subway-grit relative overflow-hidden rounded-md border border-white/10 bg-white/[.035] p-5">
+            <p className={`spray-tag pointer-events-none absolute right-4 top-1 rotate-[-4deg] text-5xl uppercase leading-none opacity-20 md:text-7xl ${lineStyles[route.line].text}`}>
+              {route.initial}
+            </p>
             <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
               <div className="w-56 shrink-0">
                 <p className={`text-xs font-black uppercase ${lineStyles[route.line].text}`}>{lineStyles[route.line].label}</p>
@@ -278,11 +455,14 @@ function ChooseLine() {
 }
 function ServicesMenu() {
   return (
-    <section id="services-menu" className="bg-coal px-4 py-20 lg:px-8">
+    <section id="services-menu" className="subway-grit bg-coal px-4 py-20 lg:px-8">
       <SectionHeading eyebrow="Menu" title="Full Services" copy="Clear timing, pricing, and details so you can pick the right appointment." />
       <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-2 xl:grid-cols-3">
         {services.map((service) => (
-          <article key={service.name} className={`interactive-frame rounded-sm border bg-black/40 p-5 ${lineStyles[service.line].border}`}>
+          <article key={service.name} className={`interactive-frame subway-grit relative overflow-hidden rounded-sm border bg-black/40 p-5 ${lineStyles[service.line].border}`}>
+            <span className={`spray-tag pointer-events-none absolute -right-3 bottom-5 rotate-[-9deg] text-5xl uppercase opacity-15 ${lineStyles[service.line].text}`}>
+              Tag
+            </span>
             <div className="mb-4 flex items-center justify-between gap-3">
               <RouteDot label={service.name.charAt(0)} color={service.line} />
               <span className="rounded bg-white/10 px-3 py-1 text-xs font-black uppercase">{lineStyles[service.line].label}</span>
@@ -324,10 +504,13 @@ function BookingForm() {
   }
 
   return (
-    <section id="booking" className="px-4 py-20 lg:px-8">
+    <section id="booking" className="relative overflow-hidden px-4 py-20 lg:px-8">
+      <div className="spray-tag pointer-events-none absolute left-4 top-24 hidden rotate-[-8deg] text-7xl uppercase leading-none text-lineGreen/20 lg:block">
+        No<br />Sleep
+      </div>
       <SectionHeading eyebrow="Booking" title="Book Your Appointment" copy="Choose a service, barber, date, and time. Add notes if you have a preference." />
       <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[.85fr_1.15fr]">
-        <div className="interactive-frame rounded-sm border border-white/10 bg-black/45 p-6">
+        <div className="interactive-frame subway-grit rounded-sm border border-white/10 bg-black/45 p-6">
           <CalendarDays className="h-10 w-10 text-lineYellow" />
           <h3 className="display-text mt-4 text-5xl uppercase">Before You Book</h3>
           <p className="mt-3 text-mutedCream">Appointments keep the shop moving, and walk-ins are welcome when a chair is open.</p>
@@ -384,7 +567,7 @@ function Field({ label, error, children }: { label: string; error?: string; chil
 
 function About() {
   return (
-    <section id="about" className="bg-steel px-4 py-20 lg:px-8">
+    <section id="about" className="subway-grit bg-steel px-4 py-20 lg:px-8">
       <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2">
         <StationVisual label="Inside the Shop" />
         <div>
@@ -405,12 +588,19 @@ function About() {
 
 function Barbers() {
   return (
-    <section id="barbers" className="px-4 py-20 lg:px-8">
+    <section id="barbers" className="relative overflow-hidden px-4 py-20 lg:px-8">
+      <div className="spray-tag pointer-events-none absolute right-2 top-16 hidden rotate-[10deg] text-7xl uppercase leading-none text-lineYellow/20 md:block">
+        Crew<br />Only
+      </div>
       <SectionHeading eyebrow="Barbers" title="Meet the Barbers" copy="Experienced barbers with clear specialties, schedules, and booking options." />
       <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-2 xl:grid-cols-4">
         {barbers.map((barber) => (
           <article key={barber.name} className="interactive-frame overflow-hidden rounded-sm border border-white/10 bg-white/[.035]">
             <div className="relative h-56 bg-gradient-to-br from-zinc-700 via-zinc-950 to-black">
+              <div className="absolute inset-0 scratch-lines opacity-50" />
+              <p className={`spray-tag paint-drip pointer-events-none absolute left-5 top-16 rotate-[-7deg] text-5xl uppercase ${lineStyles[barber.line].text} opacity-45`}>
+                {barber.name}
+              </p>
               <div className={`absolute left-5 top-5 h-28 w-28 rounded-full ${lineStyles[barber.line].bg} opacity-20 blur-2xl`} />
               <Scissors className="absolute bottom-6 right-6 h-16 w-16 text-white/15" />
             </div>
@@ -432,12 +622,16 @@ function Barbers() {
 
 function Gallery() {
   return (
-    <section id="gallery" className="bg-coal px-4 py-20 lg:px-8">
+    <section id="gallery" className="subway-grit bg-coal px-4 py-20 lg:px-8">
       <SectionHeading eyebrow="Gallery" title="Recent Work" copy="Cuts, fades, beards, shop details, and behind-the-chair atmosphere." />
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 lg:grid-cols-3">
         {gallery.map((item, index) => (
           <div key={item} className={`interactive-frame group relative min-h-56 overflow-hidden rounded-sm border border-white/10 bg-gradient-to-br ${index % 4 === 0 ? "from-lineRed/50" : index % 4 === 1 ? "from-lineBlue/50" : index % 4 === 2 ? "from-lineYellow/50" : "from-lineGreen/50"} via-zinc-900 to-black`}>
             <div className="absolute inset-0 bg-tile bg-[length:36px_36px] opacity-20" />
+            <div className="absolute inset-0 scratch-lines opacity-35" />
+            <p className="spray-tag pointer-events-none absolute left-4 top-5 rotate-[-8deg] text-4xl uppercase leading-none text-white/20 md:text-6xl">
+              BKS
+            </p>
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black to-transparent p-5">
               <p className="font-black uppercase">{item}</p>
               <p className="text-sm text-mutedCream opacity-0 transition group-hover:opacity-100">View Style</p>
@@ -468,10 +662,13 @@ function Testimonials() {
 
 function Location() {
   return (
-    <section id="contact" className="px-4 py-20 lg:px-8">
+    <section id="contact" className="relative overflow-hidden px-4 py-20 lg:px-8">
+      <div className="spray-tag pointer-events-none absolute left-6 bottom-10 hidden rotate-[4deg] text-7xl uppercase leading-none text-lineRed/20 lg:block">
+        End<br />Line
+      </div>
       <SectionHeading eyebrow="Location" title="Visit the Shop" copy="Find our Brooklyn barbershop, check hours, or call before you come in." />
       <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-2">
-        <div className="interactive-frame rounded-sm border border-white/10 bg-black/45 p-6">
+        <div className="interactive-frame subway-grit rounded-sm border border-white/10 bg-black/45 p-6">
           <h3 className="display-text text-5xl uppercase">Shop Location</h3>
           <div className="mt-6 grid gap-4 text-mutedCream">
             <p className="flex gap-3"><MapPin className="h-5 w-5 text-lineRed" />123 Barber Station Blvd, Brooklyn, NY 11201</p>
@@ -484,8 +681,12 @@ function Location() {
             <CTAButton href="tel:17185550198" variant="secondary">Call the Shop</CTAButton>
           </div>
         </div>
-        <div className="interactive-frame relative min-h-80 overflow-hidden rounded-sm border border-white/10 bg-zinc-900 grayscale">
+        <div className="interactive-frame subway-grit relative min-h-80 overflow-hidden rounded-sm border border-white/10 bg-zinc-900 grayscale">
           <div className="absolute inset-0 bg-tile bg-[length:48px_48px] opacity-50" />
+          <div className="absolute inset-0 scratch-lines opacity-40" />
+          <p className="spray-tag pointer-events-none absolute right-6 bottom-6 rotate-[-10deg] text-6xl uppercase text-white/15">
+            718
+          </p>
           <div className="absolute left-1/2 top-0 h-full w-2 -translate-x-1/2 bg-lineRed" />
           <div className="absolute left-0 top-1/2 h-2 w-full -translate-y-1/2 bg-lineBlue" />
           <div className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-8 border-black bg-lineYellow text-black">
@@ -535,7 +736,7 @@ function Footer() {
 
 export default function Home() {
   return (
-    <main>
+    <main className="lg:pl-72">
       <style jsx global>{`
         .field {
           width: 100%;
@@ -548,8 +749,8 @@ export default function Home() {
         }
       `}</style>
       <Header />
+      <StationSidebar />
       <Hero />
-      <ArrivalBoard mini />
       <ChooseLine />
       <ServicesMenu />
       <BookingForm />
