@@ -62,6 +62,51 @@ textarea:focus-visible {
   letter-spacing: 0;
 }
 
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px #f2efe7;
+  text-stroke: 1.5px #f2efe7;
+}
+
+.interactive-button,
+.interactive-frame {
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease,
+    box-shadow 220ms ease,
+    opacity 220ms ease;
+}
+
+.interactive-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28), 0 0 28px rgba(215, 51, 47, 0.18);
+}
+
+.interactive-frame:hover {
+  transform: translateY(-4px);
+  border-color: rgba(242, 239, 231, 0.32);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.32), inset 0 0 36px rgba(255, 255, 255, 0.035);
+}
+
+.interactive-button:active {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 .ticket-edge {
   background-image:
     radial-gradient(circle at left 18px, transparent 0 9px, #d8cdb9 10px),
