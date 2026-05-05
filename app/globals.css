@@ -322,9 +322,9 @@ textarea:focus-visible {
 }
 
 .hero-title {
-  max-width: 9ch;
-  font-size: clamp(5.3rem, 18.4vw, 17.5rem);
-  line-height: 0.72;
+  max-width: 15ch;
+  font-size: clamp(4.4rem, 11vw, 10.5rem);
+  line-height: 0.78;
   text-shadow:
     0.035em 0.025em 0 rgba(215, 51, 47, 0.28),
     -0.025em 0.035em 0 rgba(40, 103, 216, 0.18),
@@ -333,6 +333,7 @@ textarea:focus-visible {
 
 .hero-title span {
   display: block;
+  white-space: nowrap;
 }
 
 .station-eyebrow {

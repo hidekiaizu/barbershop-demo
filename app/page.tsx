@@ -243,27 +243,30 @@ function Hero() {
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.96)_0%,rgba(0,0,0,.72)_44%,rgba(0,0,0,.38)_73%,rgba(0,0,0,.86)_100%)]" />
       <div className="absolute inset-0 subway-grit opacity-70" />
       <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black to-transparent" />
-      <div className="relative min-h-[920px] px-4 pb-10 pt-10 sm:px-8 lg:min-h-screen lg:px-14 lg:pt-14">
+      <div className="relative min-h-[920px] px-4 pb-10 pt-10 sm:px-8 lg:min-h-[calc(100vh+16rem)] lg:px-14 lg:pt-14">
         <div className="mb-8 grid gap-3 border-y border-white/15 py-3 text-xs font-black uppercase tracking-[0.18em] text-mutedCream sm:grid-cols-3">
           <span>Brooklyn, NY</span>
           <span>Open Mon-Sun</span>
           <span>Walk-ins Welcome</span>
         </div>
-        <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="relative z-10">
-          <h1 className="hero-title display-text uppercase text-cream">
-            <span>This Isn't Just</span>
-            <span>A Barbershop.</span>
-            <span className="text-lineRed">It's A Station.</span>
-          </h1>
-          <p className="mt-6 max-w-2xl text-xl font-black leading-8 text-mutedCream md:text-2xl">
-            Sharp fades, beard work, and clean cuts moving on schedule in Brooklyn. Pick your line. Choose your conductor. Swipe in.
-          </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <CTAButton>Book Your Ride</CTAButton>
-            <CTAButton href="#services" variant="secondary">Explore the Lines</CTAButton>
-          </div>
-        </motion.div>
-        <HeroArrivals />
+        <div className="relative z-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_30rem] lg:items-start">
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+            <h1 className="hero-title display-text uppercase text-cream">
+              <span>This Isn't Just</span>
+              <span>A Barbershop.</span>
+              <span className="text-lineRed">It's A</span>
+              <span className="text-lineRed">Station.</span>
+            </h1>
+            <p className="mt-6 max-w-2xl text-xl font-black leading-8 text-mutedCream md:text-2xl">
+              Sharp fades, beard work, and clean cuts moving on schedule in Brooklyn. Pick your line. Choose your conductor. Swipe in.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <CTAButton>Book Your Ride</CTAButton>
+              <CTAButton href="#services" variant="secondary">Explore the Lines</CTAButton>
+            </div>
+          </motion.div>
+          <HeroArrivals />
+        </div>
       </div>
     </section>
   );
@@ -271,7 +274,7 @@ function Hero() {
 
 function HeroArrivals() {
   return (
-    <div className="arrival-board relative z-10 mt-10 lg:absolute lg:bottom-12 lg:right-12 lg:w-[30rem]">
+    <div className="arrival-board relative z-10 mt-10 lg:mt-[18rem] lg:w-[30rem]">
       <div className="mb-3 flex items-center justify-between border-b border-lineYellow/35 pb-3 font-mono text-xs font-black uppercase tracking-[0.16em] text-lineYellow">
         <span>Next Arrivals</span>
         <span className="arrival-flicker">10:24 AM</span>
