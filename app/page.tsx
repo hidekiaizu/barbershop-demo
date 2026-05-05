@@ -22,11 +22,11 @@ import {
 type LineColor = "red" | "blue" | "yellow" | "green";
 type BookingSelection = { service?: string; barber?: string };
 
-const lineStyles: Record<LineColor, { bg: string; text: string; border: string; ring: string; label: string }> = {
-  red: { bg: "bg-lineRed", text: "text-lineRed", border: "border-lineRed", ring: "ring-lineRed", label: "Haircuts" },
-  blue: { bg: "bg-lineBlue", text: "text-lineBlue", border: "border-lineBlue", ring: "ring-lineBlue", label: "Beard" },
-  yellow: { bg: "bg-lineYellow", text: "text-lineYellow", border: "border-lineYellow", ring: "ring-lineYellow", label: "Kids" },
-  green: { bg: "bg-lineGreen", text: "text-lineGreen", border: "border-lineGreen", ring: "ring-lineGreen", label: "VIP" },
+const lineStyles: Record<LineColor, { bg: string; text: string; ring: string }> = {
+  red: { bg: "bg-lineRed", text: "text-lineRed", ring: "ring-lineRed" },
+  blue: { bg: "bg-lineBlue", text: "text-lineBlue", ring: "ring-lineBlue" },
+  yellow: { bg: "bg-lineYellow", text: "text-lineYellow", ring: "ring-lineYellow" },
+  green: { bg: "bg-lineGreen", text: "text-lineGreen", ring: "ring-lineGreen" },
 };
 
 const navItems = [
@@ -190,7 +190,7 @@ function Header() {
         <a href="#home" className="display-text text-3xl uppercase leading-none text-cream">
           Barber Station
         </a>
-        <button className="border border-white/20 p-2" aria-label="Toggle menu" onClick={() => setOpen((value) => !value)}>
+        <button type="button" className="border border-white/20 p-2" aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} onClick={() => setOpen((value) => !value)}>
           {open ? <X /> : <Menu />}
         </button>
       </nav>
@@ -212,7 +212,7 @@ function Header() {
               </span>
             </a>
           ))}
-          <CTAButton>Book Now</CTAButton>
+          <CTAButton onClick={() => setOpen(false)}>Book Now</CTAButton>
         </div>
       )}
     </header>
@@ -279,7 +279,7 @@ function StationSidebar() {
             <span className="h-2.5 w-2.5 rounded-full bg-lineGreen shadow-[0_0_18px_rgba(77,143,57,.9)]" />
           </div>
           <p className="display-text mt-3 text-4xl uppercase leading-none text-ticket">Open Now</p>
-          <p className="mt-2 text-xs font-black uppercase tracking-[0.18em] text-mutedCream">Local Service / Mon-Fri 10AM-8PM</p>
+          <p className="mt-2 text-xs font-black uppercase tracking-[0.18em] text-mutedCream">Local Service / Daily Hours</p>
           <p className="mt-4 text-sm font-black uppercase text-lineYellow">Walk-ins available when chairs clear</p>
           <div className="barcode mt-4 h-10 opacity-35" />
         </div>
@@ -325,11 +325,23 @@ function Hero() {
 }
 
 function HeroArrivals() {
+  const [currentTime, setCurrentTime] = useState("");
+
+  useEffect(() => {
+    function updateTime() {
+      setCurrentTime(new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(new Date()));
+    }
+
+    updateTime();
+    const timer = window.setInterval(updateTime, 60000);
+    return () => window.clearInterval(timer);
+  }, []);
+
   return (
     <div className="arrival-board relative z-10 mt-10 lg:mt-[18rem] lg:w-[30rem]">
       <div className="mb-3 flex items-center justify-between border-b border-lineYellow/35 pb-3 font-mono text-xs font-black uppercase tracking-[0.16em] text-lineYellow">
         <span>Next Arrivals</span>
-        <span className="arrival-flicker">10:24 AM</span>
+        <span className="arrival-flicker">{currentTime || "Now"}</span>
       </div>
       {heroArrivals.map((item) => (
         <div key={item.name} className="grid grid-cols-[2.25rem_1fr_auto] items-center gap-3 border-b border-white/10 py-3 last:border-b-0">
@@ -368,14 +380,13 @@ function ChooseLine({ onBook }: { onBook: (selection: BookingSelection) => void 
                       <a key={stop.code} href="#booking" onClick={() => onBook({ service: stop.name })} className="station-stop group" aria-label={`Book ${stop.name}`}>
                         <span className={`mb-3 block h-10 w-10 rounded-full border-[7px] border-black ${lineStyles[route.line].bg} ring-2 ${lineStyles[route.line].ring}`} />
                         <span className="font-mono text-xs font-black uppercase text-white/50">{stop.code}</span>
-                        <span className="mt-2 block text-lg font-black uppercase leading-5 text-cream">{stop.name}</span>
-                        <span className="mt-4 flex justify-between border-t border-white/10 pt-3 text-xs font-black uppercase tracking-[0.08em] text-mutedCream">
+                        <span className="station-stop-name mt-2 block text-lg font-black uppercase leading-5 text-cream">{stop.name}</span>
+                        <span className="station-stop-meta flex items-center justify-between border-t border-white/10 pt-3 text-xs font-black uppercase tracking-[0.08em] text-mutedCream">
                           <span>{stop.duration}</span>
                           <span className="display-text text-3xl leading-none text-cream">{stop.price}</span>
                         </span>
                         <span className="book-stop-cta">Book This Stop</span>
                         <span className="absolute right-3 top-3 text-white/25 transition group-hover:text-ticket"><ChevronRight className="h-5 w-5" /></span>
-                        <span className="sr-only">Book service</span>
                       </a>
                     ))}
                   </div>
@@ -425,7 +436,7 @@ function ServicesMenu({ onBook }: { onBook: (selection: BookingSelection) => voi
               <span className={`hidden text-xs font-black uppercase tracking-[0.1em] md:block ${lineStyles[service.line].text}`}>{service.route}</span>
               <span>
                 <span className="font-mono text-xs font-black text-white/45">{service.code}</span>
-                <span className="ml-3 text-base font-black uppercase text-cream">{service.name}</span>
+                <span className="ml-3 text-base font-black uppercase text-cream max-sm:ml-2">{service.name}</span>
               </span>
               <span className="text-sm font-bold text-mutedCream">{service.duration}</span>
               <span className="display-text text-3xl leading-none text-cream">{service.price}</span>
@@ -544,7 +555,7 @@ function BookingForm({ selection }: { selection: BookingSelection }) {
               <TicketRow label="Date" value={form.date || "Pick date"} />
               <TicketRow label="Time" value={form.time || "Pick arrival"} />
               <TicketRow label="Rider" value={form.name || "Add name"} />
-              <TicketRow label="Price" value={chosenService?.price || "--"} />
+              <TicketRow label="Price" value={chosenService?.price || "Not selected"} />
               <TicketRow label="Status" value={submitted ? "Confirmed" : "Pending swipe"} />
             </div>
             <div className="barcode mt-8 h-24 opacity-80" />
@@ -643,14 +654,14 @@ function Barbers({ onBook }: { onBook: (selection: BookingSelection) => void }) 
   );
 }
 
-function Gallery() {
+function Gallery({ onBook }: { onBook: (selection: BookingSelection) => void }) {
   return (
     <section id="gallery" className="subway-grit bg-coal px-4 py-24 sm:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeading eyebrow="Station Archive / Stylized demo gallery" title="Cuts From The Platform" copy="Browse sample cut styles, beard work, and service finishes inspired by the Barber Station look." />
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
           {gallery.map(([label, title, code, tag, line], index) => (
-            <a key={`${label}-${title}`} href="#booking" className={`archive-tile group ${index === 0 || index === 5 ? "lg:row-span-2" : ""}`}>
+            <a key={`${label}-${title}`} href="#booking" onClick={() => onBook({ service: services.find((service) => service.code === code)?.name ?? title })} className={`archive-tile group ${index === 0 || index === 5 ? "lg:row-span-2" : ""}`} aria-label={`Book ${title}`}>
               <div className={`absolute inset-0 bg-gradient-to-br ${line === "red" ? "from-lineRed/55" : line === "blue" ? "from-lineBlue/55" : line === "yellow" ? "from-lineYellow/55" : "from-lineGreen/55"} via-zinc-900 to-black transition duration-500 group-hover:scale-105`} />
               <div className="absolute inset-0 bg-tile bg-[length:32px_32px] opacity-20" />
               <div className="absolute inset-0 scratch-lines opacity-35" />
@@ -739,6 +750,8 @@ function Location() {
 }
 
 function Footer() {
+  const [joined, setJoined] = useState(false);
+
   return (
     <footer className="border-t border-white/15 bg-black px-4 py-14 sm:px-8">
       <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-2 xl:grid-cols-[1.2fr_1fr_1fr_1.2fr]">
@@ -760,10 +773,10 @@ function Footer() {
           <h3 className="display-text text-4xl uppercase">Hours</h3>
           <p className="mt-5 text-lg font-bold leading-7 text-mutedCream">Mon-Fri: 10AM-8PM<br />Sat: 9AM-7PM<br />Sun: 11AM-5PM</p>
         </div>
-        <form className="grid gap-4">
+        <form className="grid gap-4" onSubmit={(event) => { event.preventDefault(); setJoined(true); }}>
           <label className="display-text text-4xl uppercase" htmlFor="newsletter">Stay On Track</label>
-          <input id="newsletter" className="field min-h-16" placeholder="Enter your email" type="email" />
-          <button className="ticket-button ticket-button-primary min-h-16">Join</button>
+          <input id="newsletter" className="field min-h-16" placeholder="Enter your email" type="email" required />
+          <button className="ticket-button ticket-button-primary min-h-16" type="submit">{joined ? "You're On Track" : "Join"}</button>
         </form>
       </div>
       <div className="mx-auto mt-12 max-w-7xl border-t border-white/10 pt-7 text-sm font-black uppercase tracking-[0.12em] text-mutedCream">
@@ -792,7 +805,7 @@ export default function Home() {
       <ServicesMenu onBook={handleBook} />
       <Barbers onBook={handleBook} />
       <BookingForm selection={selection} />
-      <Gallery />
+      <Gallery onBook={handleBook} />
       <Testimonials />
       <Location />
       <Footer />

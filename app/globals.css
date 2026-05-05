@@ -551,6 +551,15 @@ textarea:focus-visible {
   box-shadow: inset 0 -3px 0 rgba(228, 183, 46, 0.55), 0 18px 34px rgba(0, 0, 0, 0.35);
 }
 
+.station-stop-name {
+  min-height: 2.5rem;
+}
+
+.station-stop-meta {
+  margin-top: 1rem;
+  min-height: 2.25rem;
+}
+
 .book-stop-cta,
 .book-chair-button {
   display: inline-flex;
