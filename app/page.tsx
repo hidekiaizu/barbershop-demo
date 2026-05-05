@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   CalendarDays,
@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 
 type LineColor = "red" | "blue" | "yellow" | "green";
+type BookingSelection = { service?: string; barber?: string };
 
 const lineStyles: Record<LineColor, { bg: string; text: string; border: string; ring: string; label: string }> = {
   red: { bg: "bg-lineRed", text: "text-lineRed", border: "border-lineRed", ring: "ring-lineRed", label: "Haircuts" },
@@ -29,13 +30,13 @@ const lineStyles: Record<LineColor, { bg: string; text: string; border: string; 
 };
 
 const navItems = [
-  { label: "Station", href: "#home" },
-  { label: "Our Station", href: "#about" },
-  { label: "Lines", href: "#services" },
-  { label: "Conductors", href: "#barbers" },
-  { label: "Book Your Ride", href: "#booking" },
-  { label: "Archive", href: "#gallery" },
-  { label: "Visit", href: "#contact" },
+  { code: "01", label: "Station", helper: "Welcome board", href: "#home", id: "home" },
+  { code: "02", label: "Our Station", helper: "Shop overview", href: "#about", id: "about" },
+  { code: "03", label: "Lines", helper: "Choose a service", href: "#services", id: "services" },
+  { code: "04", label: "Conductors", helper: "Your barbers", href: "#barbers", id: "barbers" },
+  { code: "05", label: "Book", helper: "Appointment booking", href: "#booking", id: "booking" },
+  { code: "06", label: "Archive", helper: "Demo gallery", href: "#gallery", id: "gallery" },
+  { code: "07", label: "Visit", helper: "Location details", href: "#contact", id: "contact" },
 ];
 
 const routes = [
@@ -139,22 +140,26 @@ const barbers = [
 ];
 
 const gallery = [
-  ["Platform 01", "Skin Fade", "red"],
-  ["Track B", "Beard Lineup", "blue"],
-  ["Downtown Cut", "Taper", "yellow"],
-  ["After Hours", "Chair Detail", "green"],
-  ["Express Stop", "Clean Taper", "red"],
-  ["Night Shift", "Shop Detail", "blue"],
+  ["Platform 01", "Skin Fade", "B02", "Fade", "red"],
+  ["Track S", "Beard Lineup", "S02", "Beard Lineup", "blue"],
+  ["Downtown Cut", "Student Taper", "C02", "Kids Cut", "yellow"],
+  ["After Hours", "Full Service", "G02", "Full Service", "green"],
+  ["Express Stop", "Clean Taper", "B03", "Fade", "red"],
+  ["Night Shift", "Hot Towel Detail", "S03", "Beard Lineup", "blue"],
 ] as const;
 
 const reviews = [
-  ["Best fade in the neighborhood. Clean, fast, and professional.", "Jay", "B02"],
-  ["The whole shop has a vibe. Booking was easy and the cut was perfect.", "Marcus", "G01"],
-  ["My beard lineup was sharp. I am definitely coming back.", "Andre", "S02"],
+  ["Best fade in the neighborhood. Clean, fast, and professional.", "Jay", "B02", "Demo review"],
+  ["The whole shop has a vibe. Booking was easy and the cut was perfect.", "Marcus", "G01", "Demo review"],
+  ["My beard lineup was sharp. I am definitely coming back.", "Andre", "S02", "Demo review"],
 ];
 
 function RouteDot({ label, color }: { label: string; color: LineColor }) {
   return <span className={`route-dot ${lineStyles[color].bg}`}>{label}</span>;
+}
+
+function scrollToBooking() {
+  document.getElementById("booking")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function SectionHeading({ eyebrow, title, copy }: { eyebrow: string; title: string; copy: string }) {
@@ -167,9 +172,9 @@ function SectionHeading({ eyebrow, title, copy }: { eyebrow: string; title: stri
   );
 }
 
-function CTAButton({ children, href = "#booking", variant = "primary" }: { children: React.ReactNode; href?: string; variant?: "primary" | "secondary" }) {
+function CTAButton({ children, href = "#booking", variant = "primary", onClick }: { children: React.ReactNode; href?: string; variant?: "primary" | "secondary"; onClick?: () => void }) {
   return (
-    <a href={href} className={`ticket-button ${variant === "primary" ? "ticket-button-primary" : "ticket-button-secondary"}`}>
+    <a href={href} onClick={onClick} className={`ticket-button ${variant === "primary" ? "ticket-button-primary" : "ticket-button-secondary"}`}>
       {children}
       <ChevronRight className="h-5 w-5" />
     </a>
@@ -189,11 +194,22 @@ function Header() {
           {open ? <X /> : <Menu />}
         </button>
       </nav>
+      <div className="flex gap-2 overflow-x-auto border-t border-white/10 px-4 pb-3">
+        {routes.map((route) => (
+          <a key={route.code} href={`#line-${route.code.toLowerCase()}`} className={`route-dot route-dot-small ${lineStyles[route.line].bg}`} aria-label={`${route.name} line`}>
+            {route.code}
+          </a>
+        ))}
+      </div>
       {open && (
         <div className="grid border-t border-white/15 bg-coal p-4">
           {navItems.map((item) => (
-            <a key={item.label} href={item.href} onClick={() => setOpen(false)} className="border-b border-white/10 py-3 text-sm font-black uppercase tracking-[0.08em] text-mutedCream">
-              {item.label}
+            <a key={item.label} href={item.href} onClick={() => setOpen(false)} className="mobile-nav-link">
+              <span>{item.code}</span>
+              <span>
+                {item.label}
+                <small>{item.helper}</small>
+              </span>
             </a>
           ))}
           <CTAButton>Book Now</CTAButton>
@@ -204,32 +220,68 @@ function Header() {
 }
 
 function StationSidebar() {
+  const [active, setActive] = useState("home");
+
+  useEffect(() => {
+    function updateActiveSection() {
+      const scrollMarker = window.scrollY + window.innerHeight * 0.38;
+      let current = navItems[0].id;
+
+      for (const item of navItems) {
+        const section = document.getElementById(item.id);
+        if (!section) continue;
+        if (section.offsetTop <= scrollMarker) current = item.id;
+      }
+
+      setActive(current);
+    }
+
+    updateActiveSection();
+    window.addEventListener("scroll", updateActiveSection, { passive: true });
+    window.addEventListener("resize", updateActiveSection);
+    return () => {
+      window.removeEventListener("scroll", updateActiveSection);
+      window.removeEventListener("resize", updateActiveSection);
+    };
+  }, []);
+
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-white/15 bg-[#070707]/95 px-6 py-6 lg:block">
       <div className="absolute inset-0 bg-tile bg-[length:34px_34px] opacity-10" />
+      <div className="subway-map-bg absolute inset-0 opacity-70" />
       <div className="relative">
-        <a href="#home">
+        <a href="#home" className="block">
           <h1 className="display-text text-5xl uppercase leading-[.78] text-cream">Barber<br />Station</h1>
-          <div className="mt-4 flex gap-2">
-            <RouteDot label="B" color="red" />
-            <RouteDot label="S" color="blue" />
-            <RouteDot label="C" color="yellow" />
-            <RouteDot label="G" color="green" />
-          </div>
-          <p className="mt-5 border-y border-white/15 py-3 text-[0.65rem] font-black uppercase tracking-[0.24em] text-mutedCream">Brooklyn / Platform 718</p>
         </a>
+        <div className="mt-4 flex gap-2" aria-label="Service line shortcuts">
+          {routes.map((route) => (
+            <a key={route.code} href={`#line-${route.code.toLowerCase()}`} aria-label={`Jump to ${route.name}`} className={`route-dot ${lineStyles[route.line].bg}`}>
+              {route.code}
+            </a>
+          ))}
+        </div>
+        <p className="mt-5 border-y border-white/15 py-3 text-[0.65rem] font-black uppercase tracking-[0.24em] text-mutedCream">Brooklyn / Platform 718</p>
         <nav className="mt-5 border-y border-white/10" aria-label="Desktop station navigation">
           {navItems.map((item) => (
-            <a key={item.label} href={item.href} className="flex min-h-12 items-center gap-4 border-b border-white/10 text-xs font-black uppercase tracking-[0.08em] text-mutedCream last:border-b-0 hover:bg-white/[.04] hover:text-cream">
+            <a key={item.label} href={item.href} aria-current={active === item.id ? "page" : undefined} className="sidebar-nav-link">
+              <span className="font-mono text-[0.65rem] text-lineYellow">{item.code}</span>
               <TrainFront className="h-4 w-4 text-white/45" />
-              {item.label}
+              <span>
+                {item.label}
+                <small>{item.helper}</small>
+              </span>
             </a>
           ))}
         </nav>
-        <div className="mt-5 border border-lineYellow/45 bg-[#171307] p-4">
-          <p className="display-text text-4xl uppercase leading-none text-ticket">Open Now</p>
-          <p className="mt-2 text-xs font-black uppercase tracking-[0.18em] text-mutedCream">Mon-Fri 10AM-8PM</p>
-          <p className="mt-4 text-sm font-black uppercase text-lineYellow">Walk-ins welcome when chairs are open</p>
+        <div className="station-advisory mt-5">
+          <div className="flex items-center justify-between border-b border-lineYellow/30 pb-2">
+            <p className="font-mono text-[0.65rem] font-black uppercase tracking-[0.18em] text-lineYellow">Service Advisory</p>
+            <span className="h-2.5 w-2.5 rounded-full bg-lineGreen shadow-[0_0_18px_rgba(77,143,57,.9)]" />
+          </div>
+          <p className="display-text mt-3 text-4xl uppercase leading-none text-ticket">Open Now</p>
+          <p className="mt-2 text-xs font-black uppercase tracking-[0.18em] text-mutedCream">Local Service / Mon-Fri 10AM-8PM</p>
+          <p className="mt-4 text-sm font-black uppercase text-lineYellow">Walk-ins available when chairs clear</p>
+          <div className="barcode mt-4 h-10 opacity-35" />
         </div>
       </div>
     </aside>
@@ -290,15 +342,16 @@ function HeroArrivals() {
   );
 }
 
-function ChooseLine() {
+function ChooseLine({ onBook }: { onBook: (selection: BookingSelection) => void }) {
   return (
     <section id="services" className="relative overflow-hidden bg-[#060606] px-4 py-24 sm:px-8">
+      <div className="subway-map-bg absolute inset-0" />
       <div className="absolute inset-0 bg-tile bg-[length:42px_42px] opacity-10" />
       <div className="relative mx-auto max-w-7xl">
-        <SectionHeading eyebrow="Choose Your Line" title="Pick Your Stop" copy="The service system is the shop map: red for cuts, blue for beard work, yellow for kids, green for VIP packages." />
+        <SectionHeading eyebrow="Choose Your Line / Choose a service" title="Pick Your Stop" copy="The service system is the shop map: red for cuts, blue for beard work, yellow for kids, green for VIP packages." />
         <div className="grid gap-7">
           {routes.map((route) => (
-            <article key={route.route} className="transit-line-card">
+            <article key={route.route} id={`line-${route.code.toLowerCase()}`} className="transit-line-card scroll-mt-28">
               <div className="grid gap-5 lg:grid-cols-[15rem_1fr] lg:items-center">
                 <div>
                   <div className="flex items-center gap-3">
@@ -309,17 +362,20 @@ function ChooseLine() {
                   <p className="mt-3 text-sm font-bold leading-6 text-mutedCream">{route.desc}</p>
                 </div>
                 <div className="relative overflow-x-auto pb-2">
-                  <div className={`absolute left-8 right-8 top-[3.15rem] h-2 ${lineStyles[route.line].bg}`} />
+                  <div className={`absolute left-8 right-8 top-[3.15rem] h-1.5 ${lineStyles[route.line].bg} opacity-80`} />
                   <div className="relative grid min-w-[44rem] grid-cols-4 gap-4">
                     {route.stops.map((stop) => (
-                      <a key={stop.code} href="#booking" className="station-stop group">
+                      <a key={stop.code} href="#booking" onClick={() => onBook({ service: stop.name })} className="station-stop group" aria-label={`Book ${stop.name}`}>
                         <span className={`mb-3 block h-10 w-10 rounded-full border-[7px] border-black ${lineStyles[route.line].bg} ring-2 ${lineStyles[route.line].ring}`} />
                         <span className="font-mono text-xs font-black uppercase text-white/50">{stop.code}</span>
                         <span className="mt-2 block text-lg font-black uppercase leading-5 text-cream">{stop.name}</span>
                         <span className="mt-4 flex justify-between border-t border-white/10 pt-3 text-xs font-black uppercase tracking-[0.08em] text-mutedCream">
                           <span>{stop.duration}</span>
-                          <span>{stop.price}</span>
+                          <span className="display-text text-3xl leading-none text-cream">{stop.price}</span>
                         </span>
+                        <span className="book-stop-cta">Book This Stop</span>
+                        <span className="absolute right-3 top-3 text-white/25 transition group-hover:text-ticket"><ChevronRight className="h-5 w-5" /></span>
+                        <span className="sr-only">Book service</span>
                       </a>
                     ))}
                   </div>
@@ -333,11 +389,29 @@ function ChooseLine() {
   );
 }
 
-function ServicesMenu() {
+function ServicesMenu({ onBook }: { onBook: (selection: BookingSelection) => void }) {
+  const [filter, setFilter] = useState("All");
+  const categories = ["All", "Haircuts", "Beard", "Kids", "Packages"];
+  const filteredServices = services.filter((service) => {
+    if (filter === "All") return true;
+    if (filter === "Packages") return service.category.includes("VIP");
+    if (filter === "Kids") return service.category.includes("Kids");
+    return service.category.includes(filter);
+  });
+
   return (
     <section id="services-menu" className="subway-grit bg-coal px-4 py-20 sm:px-8">
       <div className="mx-auto max-w-7xl">
-        <SectionHeading eyebrow="Full Menu" title="Pricing Board" copy="Clear service names, duration, and price before you start booking." />
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+          <SectionHeading eyebrow="Full Menu / Full service menu" title="Pricing Board" copy="Clear service names, duration, and price before you start booking." />
+          <div className="pricing-tabs" aria-label="Pricing categories">
+            {categories.map((category) => (
+              <button key={category} type="button" onClick={() => setFilter(category)} className={filter === category ? "is-active" : ""}>
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="overflow-hidden border border-white/15 bg-black/55">
           <div className="grid grid-cols-[1fr_6rem_5rem] gap-4 border-b border-lineYellow/35 bg-[#171307] px-4 py-3 text-xs font-black uppercase tracking-[0.14em] text-lineYellow md:grid-cols-[7rem_1fr_8rem_6rem_10rem]">
             <span className="hidden md:block">Line</span>
@@ -346,8 +420,8 @@ function ServicesMenu() {
             <span>Price</span>
             <span className="hidden md:block">Board</span>
           </div>
-          {services.map((service) => (
-            <div key={service.code} className="grid grid-cols-[1fr_6rem_5rem] gap-4 border-b border-white/10 px-4 py-4 last:border-b-0 md:grid-cols-[7rem_1fr_8rem_6rem_10rem]">
+          {filteredServices.map((service) => (
+            <div key={service.code} className="pricing-row">
               <span className={`hidden text-xs font-black uppercase tracking-[0.1em] md:block ${lineStyles[service.line].text}`}>{service.route}</span>
               <span>
                 <span className="font-mono text-xs font-black text-white/45">{service.code}</span>
@@ -355,7 +429,7 @@ function ServicesMenu() {
               </span>
               <span className="text-sm font-bold text-mutedCream">{service.duration}</span>
               <span className="display-text text-3xl leading-none text-cream">{service.price}</span>
-              <a href="#booking" className="hidden text-xs font-black uppercase tracking-[0.08em] text-ticket hover:text-lineYellow md:block">Book Chair</a>
+              <a href="#booking" onClick={() => onBook({ service: service.name })} className="book-chair-button">Book Chair</a>
             </div>
           ))}
         </div>
@@ -364,12 +438,23 @@ function ServicesMenu() {
   );
 }
 
-function BookingForm() {
+function BookingForm({ selection }: { selection: BookingSelection }) {
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [form, setForm] = useState({ service: "", barber: "", date: "", time: "", name: "", phone: "", email: "", notes: "" });
   const required = useMemo(() => ["service", "barber", "date", "time", "name", "phone", "email"], []);
   const chosenService = services.find((service) => service.name === form.service);
+  const chosenBarber = barbers.find((barber) => barber.name === form.barber);
+
+  useEffect(() => {
+    if (!selection.service && !selection.barber) return;
+    setSubmitted(false);
+    setForm((current) => ({
+      ...current,
+      service: selection.service ?? current.service,
+      barber: selection.barber ?? current.barber,
+    }));
+  }, [selection]);
 
   function update(field: string, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -391,7 +476,7 @@ function BookingForm() {
     <section id="booking" className="relative overflow-hidden px-4 py-24 sm:px-8">
       <div className="absolute inset-0 subway-grit opacity-60" />
       <div className="relative mx-auto max-w-7xl">
-        <SectionHeading eyebrow="Book Your Ride" title="Swipe In" copy="A simple kiosk flow: select your line, choose your conductor, pick arrival time, and book the chair." />
+        <SectionHeading eyebrow="Book Your Ride / Appointment booking" title="Swipe In" copy="A simple kiosk flow: select your line, choose your conductor, pick arrival time, and book the chair." />
         <div className="grid gap-6 lg:grid-cols-[1.08fr_.92fr]">
           <form onSubmit={submit} className="ticket-kiosk" noValidate>
             {submitted ? (
@@ -404,34 +489,43 @@ function BookingForm() {
               </motion.div>
             ) : (
               <div>
-                <div className="mb-6 grid grid-cols-4 gap-2">
+                <div className="mb-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
                   {["Select Line", "Choose Conductor", "Pick Time", "Swipe In"].map((step, index) => (
-                    <div key={step} className="border border-black/25 bg-black/10 p-3">
+                    <div key={step} className={`booking-step ${index === 0 && form.service ? "is-complete" : ""} ${index === 1 && form.barber ? "is-complete" : ""} ${index === 2 && form.date && form.time ? "is-complete" : ""}`}>
                       <span className="display-text text-3xl leading-none">{index + 1}</span>
                       <p className="mt-1 text-[0.65rem] font-black uppercase tracking-[0.08em]">{step}</p>
                     </div>
                   ))}
                 </div>
+                {(chosenService || chosenBarber) && (
+                  <div className="selected-summary mb-5">
+                    <p className="font-mono text-xs font-black uppercase tracking-[0.12em] text-black/55">Selected route</p>
+                    <p className="mt-1 text-lg font-black uppercase">
+                      {chosenService ? `${chosenService.code} ${chosenService.name} / ${chosenService.duration} / ${chosenService.price}` : "Choose a service"}
+                    </p>
+                    <p className="text-sm font-black uppercase text-black/60">{chosenBarber ? `Conductor: ${chosenBarber.name} / Next ${chosenBarber.next}` : "Choose your barber"}</p>
+                  </div>
+                )}
                 <div className="grid gap-4 md:grid-cols-2">
                   <Field label="Select Line" error={errors.service}>
-                    <select value={form.service} onChange={(event) => update("service", event.target.value)} className="field">
+                    <select value={form.service} onChange={(event) => update("service", event.target.value)} className="field select-field">
                       <option value="">Choose a service</option>
-                      {services.map((service) => <option key={service.code}>{service.name}</option>)}
+                      {services.map((service) => <option key={service.code} value={service.name}>{service.code} / {service.name} / {service.price}</option>)}
                     </select>
                   </Field>
                   <Field label="Choose Conductor" error={errors.barber}>
-                    <select value={form.barber} onChange={(event) => update("barber", event.target.value)} className="field">
+                    <select value={form.barber} onChange={(event) => update("barber", event.target.value)} className="field select-field">
                       <option value="">Choose a barber</option>
                       {barbers.map((barber) => <option key={barber.name}>{barber.name}</option>)}
                     </select>
                   </Field>
                   <Field label="Select Date" error={errors.date}><input className="field" type="date" value={form.date} onChange={(event) => update("date", event.target.value)} /></Field>
                   <Field label="Select Time" error={errors.time}><input className="field" type="time" value={form.time} onChange={(event) => update("time", event.target.value)} /></Field>
-                  <Field label="Customer Name" error={errors.name}><input className="field" value={form.name} onChange={(event) => update("name", event.target.value)} /></Field>
-                  <Field label="Phone Number" error={errors.phone}><input className="field" type="tel" value={form.phone} onChange={(event) => update("phone", event.target.value)} /></Field>
-                  <Field label="Email" error={errors.email}><input className="field" type="email" value={form.email} onChange={(event) => update("email", event.target.value)} /></Field>
-                  <Field label="Notes / Preferences"><textarea className="field min-h-28" value={form.notes} onChange={(event) => update("notes", event.target.value)} /></Field>
-                  <button className="ticket-button ticket-button-dark md:col-span-2">Swipe In</button>
+                  <Field label="Customer Name" error={errors.name}><input className="field" placeholder="Your name" value={form.name} onChange={(event) => update("name", event.target.value)} /></Field>
+                  <Field label="Phone Number" error={errors.phone}><input className="field" placeholder="(718) 555-0000" type="tel" value={form.phone} onChange={(event) => update("phone", event.target.value)} /></Field>
+                  <Field label="Email" error={errors.email}><input className="field" placeholder="you@example.com" type="email" value={form.email} onChange={(event) => update("email", event.target.value)} /></Field>
+                  <Field label="Notes / Preferences"><textarea className="field min-h-28" placeholder="Fade height, beard detail, accessibility notes..." value={form.notes} onChange={(event) => update("notes", event.target.value)} /></Field>
+                  <button className="ticket-button ticket-button-dark md:col-span-2" type="submit">Confirm Ride</button>
                 </div>
               </div>
             )}
@@ -447,7 +541,9 @@ function BookingForm() {
             <div className="mt-6 grid gap-4 font-mono text-sm uppercase">
               <TicketRow label="Service" value={form.service || "Select line"} />
               <TicketRow label="Conductor" value={form.barber || "Choose conductor"} />
+              <TicketRow label="Date" value={form.date || "Pick date"} />
               <TicketRow label="Time" value={form.time || "Pick arrival"} />
+              <TicketRow label="Rider" value={form.name || "Add name"} />
               <TicketRow label="Price" value={chosenService?.price || "--"} />
               <TicketRow label="Status" value={submitted ? "Confirmed" : "Pending swipe"} />
             </div>
@@ -506,30 +602,38 @@ function About() {
   );
 }
 
-function Barbers() {
+function Barbers({ onBook }: { onBook: (selection: BookingSelection) => void }) {
   return (
     <section id="barbers" className="relative overflow-hidden px-4 py-24 sm:px-8">
+      <div className="subway-map-bg absolute inset-0" />
       <div className="relative mx-auto max-w-7xl">
-        <SectionHeading eyebrow="Our Conductors" title="Chair Operators" copy="Experienced barbers with clear specialties, schedules, next availability, and booking options." />
+        <SectionHeading eyebrow="Conductors / Your barbers" title="Chair Operators" copy="Experienced barbers with clear specialties, schedules, next availability, and booking options." />
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           {barbers.map((barber) => (
             <article key={barber.name} className="conductor-card">
               <div className="relative h-64 overflow-hidden bg-gradient-to-br from-zinc-700 via-zinc-950 to-black">
                 <div className="absolute inset-0 scratch-lines opacity-50" />
+                <div className="absolute left-5 top-5 z-10 bg-black/80 px-3 py-2 font-mono text-xs font-black uppercase text-ticket">Next {barber.next}</div>
                 <div className={`absolute left-5 top-5 h-24 w-24 ${lineStyles[barber.line].bg} opacity-25 blur-2xl`} />
-                <p className={`spray-tag absolute left-5 top-20 rotate-[-7deg] text-6xl uppercase leading-none ${lineStyles[barber.line].text} opacity-50`}>{barber.name}</p>
-                <UserRound className="absolute bottom-5 right-5 h-20 w-20 text-white/15" />
+                <div className="abstract-portrait">
+                  <UserRound className="h-28 w-28 text-white/20" />
+                </div>
+                <p className={`spray-tag absolute left-5 bottom-5 rotate-[-7deg] text-6xl uppercase leading-none ${lineStyles[barber.line].text} opacity-55`}>{barber.name}</p>
               </div>
               <div className="p-5">
                 <span className={`inline-flex px-3 py-1 text-xs font-black uppercase text-white ${lineStyles[barber.line].bg}`}>{barber.role}</span>
                 <h3 className="display-text mt-4 text-5xl uppercase leading-none text-cream">{barber.name}</h3>
                 <p className="mt-3 text-sm font-bold text-mutedCream">{barber.note}</p>
-                <p className="mt-3 text-sm text-mutedCream">{barber.specialty}</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {barber.specialty.split(", ").map((tag) => (
+                    <span key={tag} className="conductor-tag">{tag}</span>
+                  ))}
+                </div>
                 <div className="mt-5 grid gap-2 border-y border-white/10 py-4 text-sm font-bold text-mutedCream">
                   <span>Schedule: {barber.schedule}</span>
                   <span>Next available: <span className={lineStyles[barber.line].text}>{barber.next}</span></span>
                 </div>
-                <a href="#booking" className="ticket-button ticket-button-secondary mt-5 w-full">Book This Conductor</a>
+                <a href="#booking" onClick={() => onBook({ barber: barber.name })} className="ticket-button ticket-button-secondary mt-5 w-full">Book with {barber.name}<ChevronRight className="h-5 w-5" /></a>
               </div>
             </article>
           ))}
@@ -543,17 +647,20 @@ function Gallery() {
   return (
     <section id="gallery" className="subway-grit bg-coal px-4 py-24 sm:px-8">
       <div className="mx-auto max-w-7xl">
-        <SectionHeading eyebrow="Station Archive" title="Cuts From The Platform" copy="A contact-sheet archive of cuts, beard work, shop details, and after-hours texture." />
+        <SectionHeading eyebrow="Station Archive / Stylized demo gallery" title="Cuts From The Platform" copy="Browse sample cut styles, beard work, and service finishes inspired by the Barber Station look." />
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
-          {gallery.map(([label, title, line], index) => (
+          {gallery.map(([label, title, code, tag, line], index) => (
             <a key={`${label}-${title}`} href="#booking" className={`archive-tile group ${index === 0 || index === 5 ? "lg:row-span-2" : ""}`}>
               <div className={`absolute inset-0 bg-gradient-to-br ${line === "red" ? "from-lineRed/55" : line === "blue" ? "from-lineBlue/55" : line === "yellow" ? "from-lineYellow/55" : "from-lineGreen/55"} via-zinc-900 to-black transition duration-500 group-hover:scale-105`} />
               <div className="absolute inset-0 bg-tile bg-[length:32px_32px] opacity-20" />
               <div className="absolute inset-0 scratch-lines opacity-35" />
+              <div className="absolute inset-x-6 top-1/2 h-px bg-white/25" />
               <div className="absolute left-4 top-4 bg-ticket px-3 py-2 text-xs font-black uppercase text-black opacity-0 transition group-hover:opacity-100">View Cut</div>
+              <div className="absolute right-4 top-4 bg-black/70 px-3 py-2 font-mono text-xs font-black uppercase text-ticket">{code}</div>
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black to-transparent p-5">
                 <p className="font-mono text-xs font-black uppercase tracking-[0.12em] text-white/55">{label}</p>
                 <p className="mt-1 text-xl font-black uppercase text-cream">{title}</p>
+                <p className="mt-3 inline-flex border border-white/20 px-2 py-1 text-[0.65rem] font-black uppercase tracking-[0.1em] text-mutedCream">{tag}</p>
               </div>
             </a>
           ))}
@@ -567,9 +674,15 @@ function Testimonials() {
   return (
     <section className="px-4 py-24 sm:px-8">
       <div className="mx-auto max-w-7xl">
-        <SectionHeading eyebrow="Word on the Platform" title="Customer Signals" copy="Short notes from customers who trust the shop." />
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <SectionHeading eyebrow="Word on the Platform / Demo review cards" title="Customer Signals" copy="Sample client notes highlighting the kind of service, consistency, and chair experience Barber Station is built around." />
+          <div className="average-rating">
+            <span className="display-text text-5xl leading-none">4.9</span>
+            <span>Average demo signal</span>
+          </div>
+        </div>
         <div className="grid gap-5 md:grid-cols-3">
-          {reviews.map(([quote, name, code]) => (
+          {reviews.map(([quote, name, code, source]) => (
             <article key={name} className="review-ticket">
               <div className="mb-4 flex items-center justify-between">
                 <span className="font-mono text-sm font-black uppercase text-black/55">{code}</span>
@@ -577,6 +690,7 @@ function Testimonials() {
               </div>
               <p className="text-lg font-black leading-7 text-black">"{quote}"</p>
               <p className="mt-5 font-black uppercase text-black/65">- {name}</p>
+              <p className="mt-2 font-mono text-xs font-black uppercase tracking-[0.12em] text-black/45">{source}</p>
             </article>
           ))}
         </div>
@@ -589,19 +703,21 @@ function Location() {
   return (
     <section id="contact" className="relative overflow-hidden bg-[#060606] px-4 py-24 sm:px-8">
       <div className="absolute inset-0 bg-tile bg-[length:46px_46px] opacity-10" />
+      <div className="subway-map-bg absolute inset-0" />
       <div className="relative mx-auto max-w-7xl">
-        <SectionHeading eyebrow="Visit the Shop" title="End Line: Brooklyn" copy="Find the shop, check hours, call ahead, or get directions." />
+        <SectionHeading eyebrow="Visit the Shop / Location details" title="End Line: Brooklyn" copy="Find the demo station, check hours, call ahead, or get directions." />
         <div className="grid gap-6 lg:grid-cols-[.95fr_1.05fr]">
           <div className="station-info-board">
             <h3 className="display-text text-6xl uppercase leading-none text-cream">Station Info</h3>
             <div className="mt-6 grid gap-4 text-mutedCream">
-              <p className="flex gap-3"><MapPin className="h-5 w-5 text-lineRed" />123 Barber Station Blvd, Brooklyn, NY 11201</p>
+              <p className="flex gap-3"><MapPin className="h-5 w-5 text-lineRed" />123 Barber Station Blvd, Brooklyn, NY 11201 <span className="text-white/45">(demo address)</span></p>
               <p className="flex gap-3"><Phone className="h-5 w-5 text-lineBlue" />(718) 555-0198</p>
               <p className="flex gap-3"><Mail className="h-5 w-5 text-lineYellow" />hello@barberstation.demo</p>
               <p className="flex gap-3"><CalendarDays className="h-5 w-5 text-lineGreen" />Mon-Fri 10 AM-8 PM, Sat 9 AM-7 PM, Sun 11 AM-5 PM</p>
+              <p className="flex gap-3"><Clock3 className="h-5 w-5 text-ticket" />Walk-ins are local service: first open chair, appointment riders board first.</p>
             </div>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <CTAButton href="#">Get Directions</CTAButton>
+              <CTAButton href="https://maps.google.com/?q=123+Barber+Station+Blvd+Brooklyn+NY+11201">Get Directions</CTAButton>
               <CTAButton href="tel:17185550198" variant="secondary">Call the Shop</CTAButton>
             </div>
           </div>
@@ -614,6 +730,7 @@ function Location() {
               <Scissors className="h-9 w-9" />
             </div>
             <span className="absolute left-5 top-5 bg-black px-4 py-2 font-mono text-sm uppercase text-white">Platform 718</span>
+            <span className="absolute bottom-5 right-5 bg-ticket px-4 py-2 font-mono text-sm uppercase text-black">Transfer Available</span>
           </div>
         </div>
       </div>
@@ -658,16 +775,23 @@ function Footer() {
 }
 
 export default function Home() {
+  const [selection, setSelection] = useState<BookingSelection>({});
+
+  function handleBook(next: BookingSelection) {
+    setSelection((current) => ({ ...current, ...next }));
+    window.setTimeout(scrollToBooking, 0);
+  }
+
   return (
     <main className="lg:pl-72">
       <Header />
       <StationSidebar />
       <Hero />
-      <ChooseLine />
-      <ServicesMenu />
-      <BookingForm />
       <About />
-      <Barbers />
+      <ChooseLine onBook={handleBook} />
+      <ServicesMenu onBook={handleBook} />
+      <Barbers onBook={handleBook} />
+      <BookingForm selection={selection} />
       <Gallery />
       <Testimonials />
       <Location />
